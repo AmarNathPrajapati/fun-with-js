@@ -1,0 +1,1 @@
+1. Create a simple nav Bar with button Home, About, Services and Contact Us with search icon.
