@@ -1,0 +1,2892 @@
+bhai, ek chat start karo jisame ham step by step ek simple eCommerce website develop karenge
+poore project ko React, typeScript aur Material me banani hai...
+designing ke liye material UI use karani hai.
+modular code hoga... means sabhi ke liye seprate files
+proper folder structure follow karenge...
+
+
+Requirement must be implemeted:
+    Context API
+    React-Router Dom and Outlet
+    custom navigate: UseAppNavigate
+    jab kisi product par navigate karu toh bas aage /product/id add ho
+    path ka ek object banana hai, typescript ka fuction keval valid path lagega
+
+    folder structure jo senior ne bataya to follow:
+
+/ecommerce-app  
+│── /src  
+│   │── /app  
+│   │   │── router/Router.tsx        # React Router configuration  
+│   │   │── layout/Layout.tsx        # Layout components (Navbar, Footer, etc.)  
+│   │── /pages  
+│   │   │── HomePage.tsx             # only call home.tsx from features
+│   │   │── ProductPageg.tsx         # only call Product.tsx from features  and so on      
+│   │   │── CartPage.tsx  
+│   │   │── Wishlistpage.tsx  
+│   │   │── LoginPage.tsx  
+│   │   │── SignupPage.tsx  
+│   │── /features  
+│   │   │── cart -->Cart.tsx and           # Cart-related logic and components  
+│   │   │── wishlist --> Wishlist.tsx and styles.components.ts     # Wishlist-related logic and components  
+│   │   │── auth   -->       # Login and Signup logic  
+│   │   │── product  --->Product.tsx and styles.components.ts
+        |-- home --> Home.tsx and styles.components.ts   # Product listing and details  
+│   │── /shared  
+│   │   │── /components    # Common reusable components  
+│   │   │── /hooks         # Custom hooks (useAppNavigate, etc.)  
+│   │   │── /utils         # Helper functions, API fetcher, pagination  
+│   │   │── /context       # Context API providers (CartContext, AuthContext, etc.)  
+|   |   /entity
+|   |   |--Navbar --> Navbar.tsx and styles.components.ts
+|   |   |--Footer --> Footer.tsx and styles.components.ts
+│── /public  
+│── index.tsx  
+│── App.tsx  
+│── tsconfig.json  
+│── package.json 
+
+
+Requirements:
+eCommerce website me pages hoge
+login page 
+Signup Page
+Home page -> list of products
+Product page -> product details page
+cart page -> products in cart
+wishlist page-> product in wishlist
+
+
+Home page
+    Navbar:
+        left me logo hoga... middle me filter hoga aur search bar hoga....right me cart aur wishlist ka button hoga
+        filter:
+            filter category aur price ke basis par filter karega...
+        Search:
+            search name aur category ke basis par result dega...
+        cart:
+            jaise hee product ko add to cart kiya jayega vo cart me show ho jayega
+            aur agar user browser close karake dobara open kare toh cart me product hone chahiye
+        wishlist:
+            jaise hee product ko add to wishlist kiya jayega vo wishlist me show ho jayega
+            aur agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+    Container:
+        Container me infinite scrolling hongi
+        conntainer me product ko show karenge with its details
+        har product me two button honge add to cart and add to wishlist
+
+        add to cart:
+            jaise user add to cart button par click karega product cart me chala jayega
+            data es tarah store karana hai ki agar user browser close karake dobara open kare toh cart me product hone chahiye
+
+        add to wishlist:
+            jaise user add to wishlist button par click karega product wishlist me chala jayega
+            data es tarah store karana hai ki agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+    bottom:
+        yaha par bhai pagination implement hoga
+        pagination two part me hoga 
+        first part: set number of prouduct par page
+        second part : actual pagination
+
+        pagination:
+            prev aur next button hoga.
+            initially ese show hoga (1,2,3...9,10)
+            by default 1st wala page show ho.
+            maan lo user 6th page par aa gaya toh ab page ese show hoga (1,2,3...5,6,7...9,10)
+            logic me ho sake binary search implement karana
+
+Product page:
+    jab bhi user poduct par click kareng toh project ki page open ho hayegi with its all details and picture.
+
+
+Note: 
+    script:
+    API Class:
+        ek Generic Class API hogi usi ke andar API se related sabhi method honge
+        API class ke instance se API related operation perform honge
+        API ek fetcher class hogi jisake method ka ham use karenge...
+        almost sabhi common method use karenge... Get, Post, Put, Patch and delete.
+
+    Pagination Class:
+        handle pagination related method
+
+    infinie scorlling ke liye intersection observer ka use karana hai
+    css likhane ka sahi sequence follow karana hai, width->hight->.....->margin padding
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bhai, ese achchhe se samajho aur mujhe batao ki kya folder structure hoga....aur ham kaise step by steps develop karenge saare step bata do 
+
+
+bhai, mujhe folder structure ka matlab samajhan, ki kaun sa folder kisliye banaya jata hai.... kis folder me kis type ka data rakhate hai...
+e.g. src, app, pages, features, shared, public, components, hooks, utils, context, router, layout and auth.
+
+isame thoda sa improvement maine kar diya hai... baki sab sahi hai bhai, ab project ko start karate hai...
+
+/ecommerce-app  
+│── /src  
+│   │── /app  
+│   │   │── /router        # React Router configuration  
+│   │   │── /layout        # Layout components (Navbar, Footer, etc.)  
+│   │── /pages  
+│   │   │── Home.tsx  
+│   │   │── Product.tsx  
+│   │   │── Cart.tsx  
+│   │   │── Wishlist.tsx  
+│   │   │── Login.tsx  
+│   │   │── Signup.tsx  
+│   │── /features  
+│   │   │── /cart          # Cart-related logic and components  
+│   │   │── /wishlist      # Wishlist-related logic and components  
+│   │   │── /auth          # Login and Signup logic  
+│   │   │── /product       # Product listing and details  
+│   │── /shared  
+│   │   │── /components    # Common reusable components  
+│   │   │── /hooks         # Custom hooks (useAppNavigate, etc.)  
+│   │   │── /utils         # Helper functions, API fetcher, pagination  
+│   │   │── /context       # Context API providers (CartContext, AuthContext, etc.)  
+|   |   /entity
+|   |   |--Navbar
+|   |   |--Footer
+│── /public  
+│── index.tsx  
+│── App.tsx  
+│── tsconfig.json  
+│── package.json  
+
+
+
+bhai, next step start karo...
+bhai, Navbar me todha sudhar karana hai....
+
+Filter categories ke base par hogi... by default All Categories ka option hoga..usake baad user apane according category select kar leg
+
+Search Bar:
+Search ham direct karenge... means jo bhi data load ho chuka hai.... usi me filter karake layenge...
+
+
+### 📁 Folder Structure  
+```
+/ecommerce-app  
+│── /src  
+│   │── /app  
+│   │   │── /router        # React Router configuration  
+│   │   │── /layout        # Layout components (Navbar, Footer, etc.)  
+│   │── /pages  
+│   │   │── Home.tsx  
+│   │   │── Product.tsx  
+│   │   │── Cart.tsx  
+│   │   │── Wishlist.tsx  
+│   │   │── Login.tsx  
+│   │   │── Signup.tsx  
+│   │── /features  
+│   │   │── /cart          # Cart-related logic and components  
+│   │   │── /wishlist      # Wishlist-related logic and components  
+│   │   │── /auth          # Login and Signup logic  
+│   │   │── /product       # Product listing and details  
+│   │── /shared  
+│   │   │── /components    # Common reusable components  
+│   │   │── /hooks         # Custom hooks (useAppNavigate, etc.)  
+│   │   │── /utils         # Helper functions, API fetcher, pagination  
+│   │   │── /context       # Context API providers (CartContext, AuthContext, etc.)  
+│── /public  
+│── index.tsx  
+│── App.tsx  
+│── tsconfig.json  
+│── package.json  
+```
+
+---
+
+### 🛠️ Step-by-Step Development Plan
+
+#### 🔹 **Step 1: Project Setup**
+1. Initialize project with Vite (React + TypeScript)
+2. Install dependencies:
+   - `react-router-dom`
+   - `@mui/material` (Material UI)
+   - `@emotion/react @emotion/styled` (for MUI styling)
+   - `react-intersection-observer` (for infinite scrolling)
+   - `zustand` (for state management)
+   - `axios` (for API calls)
+
+---
+
+#### 🔹 **Step 2: Setup Routing**
+- Create `Router.tsx` inside `/app/router`
+- Define routes for:
+  - `/` → Home Page
+  - `/login` → Login Page
+  - `/signup` → Signup Page
+  - `/product/:id` → Product Page
+  - `/cart` → Cart Page
+  - `/wishlist` → Wishlist Page
+
+---
+
+#### 🔹 **Step 3: Setup Layout**
+- Create `Navbar.tsx` and `Footer.tsx` inside `/app/layout`
+- Implement:
+  - Logo (left)
+  - Search and filters (center)
+  - Cart & Wishlist buttons (right)
+
+---
+
+#### 🔹 **Step 4: Implement Context API**
+- Create `CartContext.tsx` and `WishlistContext.tsx`
+- Use `localStorage` to persist cart data
+
+---
+
+#### 🔹 **Step 5: Build Pages**
+- **Home Page**
+  - Fetch products using `API.ts`
+  - Display products with infinite scrolling
+  - Implement `Add to Cart` and `Add to Wishlist` buttons
+
+- **Product Page**
+  - Fetch individual product details using API
+  - Show product images, details, and purchase options
+
+- **Cart & Wishlist Pages**
+  - Display items added to cart/wishlist
+  - Implement `Remove` and `Proceed to Checkout`
+
+---
+
+#### 🔹 **Step 6: Custom Navigation & Path Management**
+- Create `useAppNavigate.tsx`
+- Define a `path.ts` object with valid paths
+
+---
+
+#### 🔹 **Step 7: API Fetcher Class**
+- Create `API.ts` inside `/shared/utils`
+- Implement:
+  - `get()`, `post()`, `put()`, `patch()`, `delete()`
+
+---
+
+#### 🔹 **Step 8: Implement Pagination**
+- Create `Pagination.ts` class
+- Implement:
+  - `Set Products Per Page`
+  - `Prev/Next with Binary Search`
+
+---
+
+#### 🔹 **Step 9: Infinite Scrolling**
+- Use `Intersection Observer` to load more products dynamically
+
+---
+
+#### 🔹 **Step 10: Final Touches**
+- Add authentication (`AuthContext.tsx`)
+- Add UI improvements (Material UI theme)
+- Optimize performance
+
+---
+
+⚡ **Now, let’s start with Step 1: Project Setup!** 🚀
+
+
+
+Ha bhai, Home page implement karo.... but Mai chahata hoon ki pahale API class implement kar lete hai... jiska use karake ham
+home me product renders karayent
+
+reference ke liye (dhyan rahe ye keval idea lene ke liye hai):
+//baseURL = https://dummyjson.com
+export default class API {
+    constructor(baseURL) {
+        this.baseURL = baseURL;
+    }
+    //API for fetch all the products
+    async fetchAllProducts(limit = 100, skip = 0) {
+        const response = await fetch(`${this.baseURL}/products?limit=${limit}&skip=${skip}`);
+        return response.json();
+    }
+    //API for fetch product details by ID 
+    async fetchProductById(id) {
+        const response = await fetch(`${this.baseURL}/products/${id}`);
+        return response.json();
+    }
+    //API for fetch product by category
+    async fetchProductsByCategory(category, limit = 30, skip = 0) {
+        const response = await fetch(`${this.baseURL}/products/category/${category}?limit=${limit}&skip=${skip}`);
+        return response.json();
+    }
+    //search Query
+    async searchProducts(query) {
+        const response = await fetch(`${this.baseURL}/products/search?q=${query}`);
+        return response.json();
+    }
+    //fetch all category
+    async getAllCategory(){
+        const response = await fetch(`${this.baseURL}/products/categories`);
+        return response.json();
+    }
+}
+
+
+dhyan rakhana bhai....
+Home page par ye saari functionalities hongi...
+achcche se modular code me implement karana...
+Page offset:
+    Number of product per page. (user apane according 10, 20, 50 or 100 product select kar sakata hai)
+
+ProductContainer
+    Saare products container me honge
+    page offset ke according utane pages(number of product/page offset value) ke utane section banenge
+    sroll up and down karane par page number automatic change hone chahiye
+
+Intersection Observer:
+    sabase pahale first page load hoga
+    jaise user scroll karake last me pahuchega, next data load ho jayega aur particular section me load hoga
+    naya page load hote hee page number change ho jayega
+    hame baar baar api call se bhi bachana hai... means ek baar data load ho jaye toh again api call nahi honi chahiye
+
+Pagination:
+    user jis page number par click karega... api se data lakar usake section me load kar denge
+    Pagination Class:handle pagination related method
+    prev aur next button hoga.
+    initially ese show hoga (1,2,3...9,10)(accroding to pageOffset)
+    maan lo user 6th page par aa gaya toh ab page ese show hoga (1,2,3...5,6,7...9,10)
+    logic me ho sake binary search implement karana
+
+    reference for pagination:
+    export default class Pagination {
+    constructor(totalPages) {
+        this.totalPages = totalPages;
+        this.currentPage = 1;
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+        }
+        return this.currentPage;
+    }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+        }
+        return this.currentPage;
+    }
+
+    setPage(page) {
+        this.currentPage = page;
+    }
+    // setTotalPages(newTotalPages) {
+    //     this.totalPages = newTotalPages;
+    //     this.currentPage = 1;  // Reset to first page when page size changes
+    // }
+    
+
+    getPages() {
+        // console.log("Current Page:", this.currentPage, "Total Pages:", this.totalPages);
+        let pages = [1]; //  First page hamesha dikhana hai
+
+        if (this.totalPages <= 7) {
+            for (let i = 2; i <= this.totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            let left = Math.max(2, this.currentPage - 2);
+            let right = Math.min(this.totalPages - 1, this.currentPage + 2);
+
+            // console.log("Left Bound:", left, "Right Bound:", right);
+
+            if (left > 2) {
+                pages.push("...");
+                // console.log("Adding '...' at Left");
+            }
+
+            for (let i = left; i <= right; i++) {
+                pages.push(i);
+            }
+
+            if (right < this.totalPages - 1) {
+                pages.push("...");
+                // console.log("Adding '...' at Right");
+            }
+
+            pages.push(this.totalPages);
+        }
+
+        // console.log("Pages Generated:", pages);
+        return pages;
+    }
+}
+
+
+bhai, esame products row me show hee nahi ho rahe hai... zara dkhana
+<div className="container mx-auto p-4">
+      {/* Page Offset Selector */}
+      <div className="mb-4">
+        <label className="mr-2">Products Per Page:</label>
+        <select
+          value={pageOffset}
+          onChange={(e) => {
+            setProducts([]);
+            setPageOffset(Number(e.target.value));
+          }}
+          className="border p-2"
+        >
+          {[10, 20, 50, 100].map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Product List */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {/* {products.map((product, index) => (
+          <div
+            key={product.id}
+            ref={index === products.length - 1 ? lastProductRef : null}
+            className="border p-4 shadow rounded"
+          >
+            <img src={product.thumbnail} alt={product.title} className="w-full h-40 object-cover" />
+            <h2 className="text-lg font-bold">{product.title}</h2>
+            <p>${product.price}</p>
+          </div>
+        ))} */}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => fetchProducts(pagination.current.prevPage(), pageOffset)}
+          className="mr-2 p-2 border rounded"
+        >
+          Prev
+        </button>
+        {pagination.current.getPages().map((page, index) => (
+          <button
+            key={index}
+            disabled={page === currentPage}
+            onClick={() => typeof page === "number" && fetchProducts(page, pageOffset)}
+            className="mx-1 p-2 border rounded"
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => fetchProducts(pagination.current.nextPage(), pageOffset)}
+          className="ml-2 p-2 border rounded"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+bhai, requirement ye hai ki sab kuch home page me nahi hoga...
+feature folder ---> home---> Home.tsx banao aur usake css ke liye styles.component.ts banana hai... 
+home ki saari logic Home.tsx me aur saari styles styles.components.ts me
+
+pages--->Homepage.tsx hoga, ye keval Home.tsx ko call karega
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+
+bhai, project structure thoda change hua hai...
+localstorage ka use karake login, signup and logout ki functionality bhi implement karani hai.
+protected Route ka user karana hai... bina login ke koi home, product, cart or wishlist me aaye toh login par redirect kar de.
+
+features folder ke andar home, product, cart, wishlist, signup and login ka page hoga
+home folder ke andar Home.tsx and styles.component.ts hoga...
+product folder ke andar Product.tsx and styles.component.ts hoga and so on...
+ye logic and style cover karenge
+
+
+pages ke andar
+HomePage.tsx, ProductPage.tsx, CartPage.tsx, WishlistPage.tsx, SignupPage.tsx and loginPage.tsx 
+ye keval un pages ko call karenge.
+
+
+
+
+bhai, decision ye liya gaya hai ki pahale core functionality develop karenge fir login aur signup functionality develop kiya jayega
+abhi tak ye develop hua hai
+
+src/app/layout/Layout.tsx
+
+import { Outlet } from "react-router-dom";
+import { Box, Container } from "@mui/material";
+import { useState } from "react";
+import Navbar from "../../entity/Navbar/Navbar";
+import Footer from "../../entity/Footer/Footer";
+
+const Layout = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Navbar onSearch={setSearchQuery} onFilter={setSelectedCategory} />
+      <Container sx={{ flex: 1, padding: 2 }}>
+        <Outlet context={{ searchQuery, selectedCategory }} />
+      </Container>
+      <Footer />
+    </Box>
+  );
+};
+
+export default Layout;
+
+src/layout/router/Router.tsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "../../pages/HomePage";
+import Login from "../../pages/LoginPage";
+import Signup from "../../pages/SignupPage";
+import Product from "../../pages/ProductPage";
+import Cart from "../../pages/CartPage";
+import Wishlist from "../../pages/WishlistPage";
+import Layout from "../layout/Layout";
+
+
+const Router = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
+          <Route path="product/:id" element={<Product />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="wishlist" element={<Wishlist />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default Router;
+
+
+src/entity/Footer/Footer.tsx
+import { Box, Typography } from "@mui/material";
+
+const Footer = () => {
+  return (
+    <Box sx={{ textAlign: "center", padding: 2, backgroundColor: "#f5f5f5", marginTop: "auto" }}>
+      <Typography variant="body2">© {new Date().getFullYear()} eShop. All rights reserved.</Typography>
+    </Box>
+  );
+};
+
+export default Footer;
+
+
+src/entity/Navbar/Navbar.tsx
+import { AppBar, Toolbar, Typography, Box, IconButton, TextField, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { ShoppingCart, Favorite } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+
+const categories = ["All Categories", "Electronics", "Clothing", "Home Appliances", "Books", "Toys"];
+
+const Navbar = ({ onSearch, onFilter }: { onSearch: (query: string) => void; onFilter: (category: string) => void }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+
+  // Handle category change
+  const handleCategoryChange = (event: SelectChangeEvent) => {
+    const category = event.target.value;
+    setSelectedCategory(category);
+    onFilter(category);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    onSearch(query);
+  };
+
+  return (
+    <AppBar position="sticky" sx={{ backgroundColor: "#fff", color: "#000" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        
+        {/* Left: Logo */}
+        <Typography variant="h6" component={Link} to="/" sx={{ textDecoration: "none", color: "inherit" }}>
+          eShop
+        </Typography>
+
+        {/* Middle: Filter & Search */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {/* Category Filter */}
+          <Select size="small" value={selectedCategory} onChange={handleCategoryChange} sx={{ minWidth: 150 }}>
+            {categories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+
+          {/* Search Bar */}
+          <TextField 
+            size="small" 
+            placeholder="Search products..." 
+            value={searchQuery} 
+            onChange={handleSearchChange} 
+          />
+        </Box>
+
+        {/* Right: Cart & Wishlist */}
+        <Box>
+          <IconButton component={Link} to="/wishlist">
+            <Favorite color="primary" />
+          </IconButton>
+          <IconButton component={Link} to="/cart">
+            <ShoppingCart color="primary" />
+          </IconButton>
+        </Box>
+
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Navbar;
+
+
+src/features/home/Home.tsx
+import React, { useEffect, useRef, useState } from "react";
+import api from "../../shared/utils/api";
+import Pagination from "../../shared/utils/Pagination";
+import { Product } from "../../shared/types";
+import { Container, ProductGrid, ProductCard, Image, Title, Price, PaginationContainer, Button } from "./styles.components";
+
+const Home = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [pageOffset, setPageOffset] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pagination = useRef(new Pagination(1));
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastProductRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    fetchProducts(1, pageOffset);
+  }, [pageOffset]);
+
+  useEffect(() => {
+    if (!lastProductRef.current) return;
+
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages) {
+          fetchProducts(currentPage + 1, pageOffset);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.current.observe(lastProductRef.current);
+
+    return () => {
+      if (observer.current) observer.current.disconnect();
+    };
+  }, [products]);
+
+  const fetchProducts = async (page: number, offset: number) => {
+    try {
+      const skip = (page - 1) * offset;
+      const response = await api.fetchAllProducts(offset, skip);
+      setProducts((prev) => [...prev, ...response.products]);
+      setTotalPages(Math.ceil(100 / offset));
+      pagination.current = new Pagination(totalPages);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  return (
+    <Container>
+      <div>
+        <label>Products Per Page:</label>
+        <select
+          value={pageOffset}
+          onChange={(e) => {
+            setProducts([]);
+            setPageOffset(Number(e.target.value));
+          }}
+        >
+          {[10, 20, 50, 100].map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <ProductGrid>
+        {products.map((product, index) => (
+          <ProductCard key={product.id} ref={index === products.length - 1 ? lastProductRef : null}>
+            <Image src={product.thumbnail} alt={product.title} />
+            <Title>{product.title}</Title>
+            <Price>${product.price}</Price>
+          </ProductCard>
+        ))}
+      </ProductGrid>
+        
+      <PaginationContainer>
+        <Button disabled={currentPage === 1} onClick={() => fetchProducts(pagination.current.prevPage(), pageOffset)}>
+          Prev
+        </Button>
+        {pagination.current.getPages().map((page, index) => (
+          <Button key={index} disabled={page === currentPage} onClick={() => typeof page === "number" && fetchProducts(page, pageOffset)}>
+            {page}
+          </Button>
+        ))}
+        <Button disabled={currentPage === totalPages} onClick={() => fetchProducts(pagination.current.nextPage(), pageOffset)}>
+          Next
+        </Button>
+      </PaginationContainer>
+    </Container>
+  );
+};
+
+export default Home;
+
+
+
+src/features/home/styles.components.ts
+import { styled } from "@mui/material"; 
+// import { styled } from "@mui/system"; 
+
+export const Container = styled("div")({
+  width: "100%",
+  maxWidth: "1200px",
+  margin: "auto",
+  padding: "20px",
+});
+
+export const ProductGrid = styled("div")({
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+  gap: "20px",
+});
+
+export const ProductCard = styled("div")({
+  border: "1px solid #ddd",
+  padding: "10px",
+  textAlign: "center",
+  boxShadow: "2px 2px 10px rgba(0, 0, 0, 0.1)",
+  borderRadius: "10px",
+});
+
+export const Image = styled("img")({
+  width: "100%",
+  height: "150px",
+  objectFit: "cover",
+  borderRadius: "10px",
+});
+
+export const Title = styled("h2")({
+  fontSize: "16px",
+  fontWeight: "bold",
+  margin: "10px 0",
+});
+
+export const Price = styled("p")({
+  fontSize: "14px",
+  color: "#28a745",
+  fontWeight: "bold",
+});
+
+export const PaginationContainer = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  marginTop: "20px",
+});
+
+export const Button = styled("button")({
+  margin: "5px",
+  padding: "8px 12px",
+  border: "none",
+  background: "#007bff",
+  color: "white",
+  borderRadius: "5px",
+  cursor: "pointer",
+  "&:disabled": {
+    background: "#ddd",
+    cursor: "not-allowed",
+  },
+});
+
+
+src/shared/utils/ApiFetcher.tsx
+import { Product } from "../types";
+
+export default class ApiFetcher {
+    private baseURL: string;
+  
+    constructor(baseURL: string) {
+      this.baseURL = baseURL;
+    }
+  
+    // 🔹 Generic Fetch Method (Reusable for GET, POST, PUT, DELETE)
+    private async request<T>(endpoint: string, method: string = "GET", body?: unknown): Promise<T> {
+      const options: RequestInit = {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: body ? JSON.stringify(body) : undefined,
+      };
+  
+      const response = await fetch(`${this.baseURL}${endpoint}`, options);
+      if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+      
+      return response.json() as Promise<T>;
+    }
+  
+    // 🔹 Fetch All Products with Pagination
+    async fetchAllProducts(limit: number = 100, skip: number = 0) {
+      return this.request<{ products: Product[] }>(`/products?limit=${limit}&skip=${skip}`);
+    }
+  
+    // 🔹 Fetch Product Details by ID
+    async fetchProductById(id: number) {
+      return this.request<Product>(`/products/${id}`);
+    }
+  
+    // 🔹 Fetch Products by Category
+    async fetchProductsByCategory(category: string, limit: number = 30, skip: number = 0) {
+      return this.request<{ products: Product[] }>(`/products/category/${category}?limit=${limit}&skip=${skip}`);
+    }
+  
+    // 🔹 Search Products
+    async searchProducts(query: string) {
+      return this.request<{ products: Product[] }>(`/products/search?q=${query}`);
+    }
+  
+    // 🔹 Fetch All Categories
+    async getAllCategories() {
+      return this.request<string[]>(`/products/categories`);
+    }
+  }
+  
+
+src/shared/utils/api.tsx
+import ApiFetcher from "./ApiFetcher";
+
+const api = new ApiFetcher("https://dummyjson.com");
+export default api;
+
+
+src/shared/utils/Pagination.tsx
+export default class Pagination {
+    private totalPages: number;
+    private currentPage: number;
+  
+    constructor(totalPages: number) {
+      this.totalPages = totalPages;
+      this.currentPage = 1;
+    }
+  
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+      return this.currentPage;
+    }
+  
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+      return this.currentPage;
+    }
+  
+    setPage(page: number) {
+      this.currentPage = page;
+    }
+  
+    getPages() {
+      let pages: (number | string)[] = [1];
+  
+      if (this.totalPages <= 7) {
+        for (let i = 2; i <= this.totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        let left = Math.max(2, this.currentPage - 2);
+        let right = Math.min(this.totalPages - 1, this.currentPage + 2);
+  
+        if (left > 2) pages.push("...");
+        for (let i = left; i <= right; i++) {
+          pages.push(i);
+        }
+        if (right < this.totalPages - 1) pages.push("...");
+        pages.push(this.totalPages);
+      }
+      return pages;
+    }
+  }
+  
+
+  src/shared/types.tsx
+  export type Product = {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    discountPercentage: number;
+    rating: number;
+    stock: number;
+    brand: string;
+    category: string;
+    thumbnail: string;
+    images: string[];
+  };
+  
+
+  src/app.tsx
+  import Router from "./app/router/Router";
+function App() {
+  return <Router />;
+}
+
+export default App;
+
+bhai, ek baar code samajha lo fir aage ki planning karate hai...
+
+
+
+
+
+
+
+
+Ha bhai, esi project ko ham logo ne simple html, css aur javascript me develop kiya hai,es baar hame react, typescript aur material UI me develop karanah hai aur proper folder structure follow karana hai...best code pratice follow karani hai....
+bhai, mai tumhe code deta hoon mujhe yahi fuctionalities chahiye... aur jaldi jaldi achche se develop karana hai..
+
+bhai, mai do baar me code deta hoon ek baar saari html aru dusari baar me saari script
+tum ek baar samajha lo bhai implemention start karana
+
+
+index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCommerce - Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <div class="search-filter">
+            <input type="text" placeholder="Search products..." id="searchBox">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+        </div>
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav>
+    <!-- Product Container -->
+    <div class="product-container" id="productContainer">
+
+        <div id="scrollEnd">
+            Loading More...
+        </div>
+    </div>
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <div>
+            <label for="pageSize">Products per Page:</label>
+            <select id="pageSize">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+
+        <div class="pagination" id="paginationContainer">
+            <!-- Scroll End Detector -->
+        </div>
+    </div>
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/pagination.js"></script>
+    <script type="module" src="scripts/app.js"></script>
+    <script type="module" src="scripts/product.js"></script>
+
+</body>
+</html>
+
+
+
+cart.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/cart.css">
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav>
+
+
+    <h1 class="my-cart-heading">My Cart</h1>
+    <!-- Adding Product Dynamically -->
+    <div class="product-container" id="cartContainer"></div>
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/cart.js"></script>
+</body>
+</html>
+
+
+
+product.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/product-details.css">
+
+</head>
+<body>
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav> 
+
+    
+    <!-- adding product details -->
+    <div class="product-details" id="productDetails"></div>
+
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/product.js"></script>
+</body>
+</html>
+
+ab script ka code lo samjho aur ek ek karake saari functionality implement karake do...
+dhyan rahe bhai....es baar hame react, typescript aur material UI me develop karanah hai aur proper folder structure follow karana hai...best code pratice follow karani hai....
+bhai, mai tumhe code deta hoon mujhe yahi fuctionalities chahiye... aur jaldi jaldi achche se develop karana hai..
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+
+scripts/app.js
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //listing of products:1
+    const productContainer = document.getElementById("productContainer");
+    //search functionality:1
+    const searchBox = document.getElementById("searchBox");
+    //listing of categories:1
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const pageSizeSelect = document.getElementById("pageSize");
+    //fetching all categories : listing of categories:2
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response?.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    //infiniteScrolling:1
+    let isFetching = false;
+    //searching:0
+    let allLoadedProducts = []; //Store all fetched data
+    // let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let cache = {};  // Cache object to store API responses
+    //add to cart and wishlit:0
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    pageSizeSelect.addEventListener("change", () => {
+        pageSize = parseInt(pageSizeSelect.value);  // Get new page size
+        //caching:0
+        cache = {}; // Clear cache when page size changes
+        let totalPages = Math.ceil(totalProducts / pageSize); // Recalculate total pages
+        pagination = new Pagination(totalPages);  // Reset pagination object
+        currentPage = 1;  // Reset to first page
+        loadProducts(currentPage, categoryFilter.value);  // Reload products
+        renderPagination();  // Update pagination UI
+    });
+    //Scrolling Effects
+    function smoothScroll(scrollAmount) {
+        let currentScroll = 0;
+        let step = 5; // Jitna chhota step hoga, utna smooth lagega
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10); // Ye 10ms delay scroll ko dheere karega
+    }
+
+    function addPageIndicator(page) {
+        let indicator = document.createElement("div");
+        indicator.id = page;
+        indicator.style.height = "50px"
+        indicator.classList.add("page-indicator");
+        productContainer.appendChild(indicator);
+        console.log("adsfasdfdfddsf___asfadsfad", indicator);
+    }
+
+
+    async function loadProducts(page = 1, category = "") {
+        //caching:1
+        let cacheKey = `${page}_${category}_${pageSize}`;
+        console.log("asfsfdsfsdf__adfd", cacheKey);
+        if (cache[cacheKey]) {
+            renderProducts(cache[cacheKey]);
+            setTimeout(smoothScroll(50), 1000);
+            renderPagination();
+            observer.disconnect();
+            document.getElementById("scrollEnd").style.display = 'none';
+            // Scroll function disable kar do
+            productContainer.scrollTop = 0;
+            window.disableScroll = true;
+            return;
+        } else {
+            window.disableScroll = false;
+        }
+        if (isFetching) return;
+        isFetching = true;
+        let scollElement = document.getElementById("scrollEnd");
+        if (scollElement) {
+            document.getElementById("scrollEnd").style.display = 'block';
+        }
+        let skip = (page - 1) * pageSize;
+        if (category) {
+            searchBox.value = "";
+            if (scollElement) {
+                document.getElementById("scrollEnd").style.display = 'none';
+            }
+        }
+        //listing of product:2
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        console.log("asdfsdfsdfdsf__asdfsd", pageSize);
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            //searching:01
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+        //caching:3
+        cache[cacheKey] = response.products; // Store response in cache
+        //listing of Product:4
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+        if (page >= pagination.totalPages) {
+            document.getElementById("scrollEnd").style.display = 'none';
+            observer.disconnect();
+        }
+    }
+
+    //listing of product:4
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            console.log("asfasdfasdfasdf____asdfsadf", products[0]);
+            productContainer.innerHTML = products?.map(product => `
+                <div class="product-card">
+                <img src="${product?.thumbnail}" alt="${product.title}">
+                <h3>${product?.title}</h3>
+                <p>₹${product?.price}</p>
+                <button onclick="toggleCart(${product?.id})">
+                    ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+                </button>
+                <button onclick="toggleWishlist(${product?.id})">
+                    ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+                <a href="product.html?id=${product?.id}" class="view-details">View Details</a>
+                </div>
+            `
+            ).join('');
+
+            // console.log("adfafasdfadf___adfadfadfsadsf",productContainer.innerHTML);
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "20px"; // Ensure it has height
+            scrollEnd.textContent = "Loading More..."
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        observer.observe(scrollEnd);//observer triggered if it view scrollEnd in viewport
+    }
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+    //add to cart
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //add to wish list
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //seaching functionlity
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    //searching functionlity:2
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+    //searching functionlity:3
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+    //searching functionlity:4
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+    //category functionaly
+    categoryFilter.addEventListener("change", () => {
+        //caching: 4
+        cache = {}; // Reset cache when category changes
+        loadProducts(1, categoryFilter.value);
+    });
+
+
+
+    function smoothScrollOnClick(pageSize) {
+        if (window.disableScroll) return;
+        let productContainer = document.querySelector(".product-container"); // Ensure correct container selector
+        let productCards = document.querySelectorAll(".product-card"); // Select all product cards
+
+        if (!productContainer || productCards.length === 0) return; // If elements not found, exit
+
+        let productCardHeight = productCards[0].offsetHeight; // Height of one product card
+        let containerWidth = productContainer.clientWidth; // Width of product container
+        let productCardWidth = productCards[0].offsetWidth; // Width of one product card
+
+        // Calculate number of product cards in one row
+        let cardsPerRow = Math.floor(containerWidth / productCardWidth);
+        if (cardsPerRow === 0) cardsPerRow = 1; // Safety check to avoid division by zero
+
+        // Calculate number of rows per page
+        let rowsPerPage = Math.ceil(pageSize / cardsPerRow);
+
+        // Final scroll amount
+        let scrollAmount = rowsPerPage * productCardHeight;
+
+        let currentScroll = 0;
+        let step = Math.ceil(scrollAmount / 50); // Smaller steps for smooth scrolling
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10);
+    }
+
+
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+        // Scroll logic add karein
+        setTimeout(smoothScrollOnClick(pageSize), 1000); // Scroll animation
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            // addPageIndicator(currentPage);
+            setTimeout(smoothScroll(200), 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+
+
+
+
+
+scripts/product.js
+
+import API from './api.js';
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //fetching query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    //getting ID of that product
+    const productId = urlParams.get("id");
+    //accessing the productDetails Element
+    const productDetails = document.getElementById("productDetails");
+
+
+    //updating counter of cart and wishlist.
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+    function updateCounters() {
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+
+    //logic to add product into cart and whishlist
+    //add to cart
+    window.toggleCart1 = (productId) => {
+        cart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+            document.getElementById('addToCart').textContent = "Add To Cart"
+        } else {
+            cart.push(productId);
+            document.getElementById('addToCart').textContent = "Remove From Cart"
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCounters();
+    };
+
+
+    //add to wish list
+    window.toggleWishlist1 = (productId) => {
+        wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+            document.getElementById('addToWishlist').textContent = "Add To Wishlist"
+        } else {
+            wishlist.push(productId);
+            document.getElementById('addToWishlist').textContent = "Remove From Wishlist"
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        updateCounters();
+    };
+    const getStars = (rating) => {
+        let fullStars = Math.round(rating); // 0.5 se upar wale round ho jayenge
+        return '⭐'.repeat(fullStars);
+    };
+    // Function to change the main image
+    window.changeImage = function(newSrc) {
+        document.getElementById("mainImage").src = newSrc;
+    }
+
+    if (productId) {
+        //fetching product using that ID
+        const product = await api.fetchProductById(productId);
+        console.log("asfdasdfsadfddfs____dsafdsdfs", product);
+        //populating product details
+        productDetails.innerHTML = `
+            <div class="product-container">
+                <div class="product-image">
+            <img id="mainImage" src="${product?.images[0]}" alt="${product?.title}">
+            <div class="thumbnails">
+    ${product?.images?.length > 1 
+        ? product?.images.map(img => 
+            `<img class="thumbnail" src="${img}" onclick="changeImage('${img.replace(/'/g, "\\'")}')">`
+        ).join('') 
+        : ''
+    }
+</div>
+
+        </div>
+                <div class="product-info">
+                    <h1>${product?.title}</h1>
+                    <p class="brand">Brand: <strong>${product?.brand}</strong></p>
+                    <p class="category">Category: <strong>${product?.category}</strong></p>
+                    <p class="description">${product?.description}</p>
+                    <p class="price">Price: ₹${product?.price} <span class="discount">(${product?.discountPercentage}% off)</span></p>
+                    <p class="availability ${product?.availabilityStatus === 'Low Stock' ? 'low-stock' : ''}">Status: ${product?.availabilityStatus}</p>
+                    <p class="stock">Stock: ${product?.stock} left</p>
+                    <p class="rating">Average Rating: ${getStars(product?.rating)}</p>
+                    <p class="shipping">🚚 Shipping: ${product?.shippingInformation}</p>
+                    <p class="warranty">🛠 Warranty: ${product?.warrantyInformation}</p>
+                    <p class="return-policy">🔄 Return Policy: ${product?.returnPolicy}</p>
+
+                    <div class="product-buttons">
+                        
+                        
+
+                        <button id="addToCart" class="add-to-cart" onclick="toggleCart1(${product?.id})">
+            ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+        </button>
+        <button id="addToWishlist" class="add-to-wishlist" onclick="toggleWishlist1(${product?.id})">
+            ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
+
+
+
+
+                        <button class="buy-now">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reviews-section">
+                <h2>Customer Reviews</h2>
+                <div class="reviews">
+                    ${product?.reviews.map(review => `
+                        <div class="review">
+                            <p><strong>${review.reviewerName}</strong>
+                             ${'⭐'.repeat(review.rating)}
+                             </p>
+                            <p class="review-comment">"${review.comment}"</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+});
+
+
+
+
+
+styles/cart.css
+.my-cart-heading{
+    text-align: center;
+    color: var(--btn1);
+    margin-top: 10px;
+}
+
+styles/navbar.css
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 20px;
+    background-color: #333;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    margin-left: 10px;
+}
+.search-filter {
+    display: flex;
+    gap: 10px;
+}
+.search-filter input, select {
+    padding: 5px;
+}
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+
+
+styles/product-details.css
+.product-image {
+    text-align: center;
+    width: 300px;  /* Fixed width */
+    height: 300px; /* Fixed height */
+    margin: auto;  /* Center align */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.product-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.thumbnails {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.thumbnails .thumbnail {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.thumbnails .thumbnail:hover {
+    transform: scale(1.1);
+    border: 1px solid #007BFF;
+}
+
+/* styles/product-details.css */
+
+.product-container {
+    display: flex;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+    flex: 1;
+    padding: 20px;
+}
+
+.product-info h1 {
+    font-size: 28px;
+    color: #333;
+}
+
+.brand, .category, .price, .availability, .stock, .rating, .shipping, .warranty, .return-policy {
+    font-size: 16px;
+    color: #555;
+    margin: 8px 0;
+}
+
+.description {
+    font-size: 18px;
+    color: #444;
+    margin-bottom: 15px;
+}
+
+.price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e60023;
+}
+
+.discount {
+    font-size: 16px;
+    color: #4caf50;
+}
+
+.low-stock {
+    color: #ff9800;
+    font-weight: bold;
+}
+
+.product-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.product-buttons button {
+    padding: 12px 18px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-weight: bold;
+}
+
+.add-to-cart {
+    border: 1px solid var(--btn1);
+    background: white;
+    color: var(--btn1)
+}
+.add-to-cart:hover {
+    background: var(--btn1);
+    color: white; 
+}
+
+.add-to-wishlist {
+    border: 1px solid  var(--btn2);
+    background: white;
+    color: var(--btn2);
+}
+
+.add-to-wishlist:hover {
+    background: var(--btn2);
+    color: white
+}
+
+.buy-now {
+    border: 1px solid  var(--btn3);
+    background: white;
+    color: var(--btn3);
+}
+.buy-now:hover {
+    background: var(--btn3);
+    color: white
+}
+
+
+
+.product-buttons button:hover {
+    opacity: 0.8;
+}
+
+/* Reviews Section */
+.reviews-section {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-section h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.review {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.review p {
+    margin: 5px 0;
+}
+
+.review-comment {
+    font-style: italic;
+    color: #555;
+}
+
+
+styles/style.css  
+:root {
+    --btn1: #218838;
+    --btn2: #f0471d;
+    --btn3: #007bff;
+}
+*{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+
+button.active {
+    background-color: var(--btn3);
+    color: white;
+    font-weight: bold;
+}
+/* Design for the container*/
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    margin: 15px;
+    height: 74vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #f9f9f9;
+    box-shadow: inset 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+/* Hover Effect */
+.product-container:hover {
+    box-shadow: inset 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+/* styling for product card */
+.product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0px 10px 4px -2px rgba(21, 40, 241, 0.121);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+.product-card:hover {
+    transform: scale(1.05);
+} 
+
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit:contain;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+}
+
+.product-card h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+    background: white;
+}
+.product-card h4 {
+    font-size: 15px;
+    margin: 10px 0;
+    font-weight: lighter;
+    color: #797272;
+    background: white;
+    text-align: justify;
+    line-height: 18px;
+}
+
+.product-card p {
+    font-size: 16px;
+    color: var(--btn3);
+    font-weight: bold;
+}
+
+.product-card button {
+    width: 100%;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+}
+.product-card a {
+    width: 100%;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Add to Cart Button */
+.product-card button:nth-child(4) {
+    border: 1px solid var(--btn1);
+    background: white;
+    color: var(--btn1)
+}
+
+.product-card button:nth-child(4):hover {
+    background: var(--btn1);
+    color: white;
+}
+
+/* Wishlist Button */
+.product-card button:nth-child(5) {
+    border: 1px solid  var(--btn2);
+    background: white;
+    color: var(--btn2);
+}
+
+.product-card button:nth-child(5):hover {
+    background: var(--btn2);
+    color: white
+}
+
+/* View Details Button */
+.product-card .view-details {
+    border: 1px solid  var(--btn3);
+    background: white;
+    color: var(--btn3);
+    text-decoration: none;
+}
+
+.product-card .view-details:hover {
+    background: var(--btn3);
+    color: white
+}
+
+
+/*styling for wishlist and cart icon*/
+.icon-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+.icon-container:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease-in-out;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--btn2);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 3px 7px;
+    min-width: 18px;
+    text-align: center;
+    display: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.icon-container:hover .badge {
+    background: var(--btn3);
+    color: white;
+}
+
+/* Show badge when count > 0 */
+.badge:not(:empty) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Desigining for search and categorhy pages*/
+.search-filter {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-filter input, .search-filter select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.search-filter input {
+    width: 250px;
+}
+
+.search-filter select {
+    cursor: pointer;
+}
+
+.search-filter input:focus, .search-filter select:focus {
+    border-color: var(--btn3);
+    box-shadow:inset 0 0 5px rgba(0, 123, 255, 0.3);
+    outline: none;
+}
+/*styling of logo*/
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.logo-container img {
+    max-width: 90px;
+    height: auto;
+    filter: invert(1);
+    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+.logo-container:hover img {
+    transform: scale(1.1);
+    filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.2));
+    filter: invert(1);
+}
+/* styling for the loader*/
+#scrollEnd {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--btn1);
+    padding: 10px;
+    margin: 20px 0;
+    position: relative;
+}
+
+/* Loader Animation */
+#scrollEnd::after {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 3px solid var(--btn1);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* Spinner Animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/**styling for pagination**/
+.pagination-container {
+    display: flex;
+    justify-content: space-between;  /* Products left, Pagination right */
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 2px solid #ddd;
+    margin-top: 10px;
+}
+
+/* Page Size Dropdown Styling */
+#pageSize {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--btn3);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Pagination Styling */
+.pagination {
+    display: flex;
+    gap: 8px;
+}
+
+/* Number Buttons */
+.pagination button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #ddd;
+}
+
+.pagination button:hover {
+    background-color: var(--btn3);
+    color: white;
+}
+
+/* Active Page */
+.pagination button.active {
+    background-color: var(--btn3);
+    color: white;
+    font-weight: bold;
+    border: 1px solid var(--btn3);
+}
+
+/* Disabled Buttons */
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Previous & Next Buttons */
+.pagination .prev-btn,
+.pagination .next-btn {
+    background-color: var(--btn3);
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 5px;
+}
+
+.pagination .prev-btn:hover,
+.pagination .next-btn:hover {
+    background-color: var(--btn3);
+}
+
+
+styles/wishlist.css
+.my-wishlist-heading{
+    text-align: center;
+    color: var(--btn1);
+    margin-top: 10px;
+} 
+
+
+
+
+
+bhai, abhi add to cart aur add to wishlist wali fuctionality complete karate hai
+esi project ko ham logo ne simple html, css aur javascript me develop kiya hai,es baar hame react, typescript aur material UI me develop karanah hai aur proper folder structure follow karana hai...best code pratice follow karani hai....
+aur jaldi jaldi achche se develop karana hai... achchhe se guide karate rahana
+
+
+wishlist.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/wishlist.css">
+</head>
+<body> 
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav> 
+
+    <h1 class="my-wishlist-heading">My Wishlist</h1>
+    <!-- adding wishlist details -->
+    <div class="product-container" id="wishlistContainer"></div>
+
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/wishlist.js"></script>
+</body>
+</html>
+
+scripts/wishlist.js
+import API from './api.js';
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    const wishlistContainer = document.getElementById("wishlistContainer");
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+    //implementing caching functionality
+    let wishlistData = JSON.parse(sessionStorage.getItem("wishlistData")) || {};
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length; 
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+
+    if (wishlist.length === 0) {
+        wishlistContainer.innerHTML = "<p>Wishlist is empty.</p>";
+        return;
+    }
+    //rendering wishlist
+    function renderWishlist(wishlistItems){
+        wishlistContainer.innerHTML = Object.values(wishlistItems)?.map(product => `
+            <div class="product-card" id="product-${product?.id}">
+                <img src="${product?.thumbnail}" alt="${product?.title}">
+                <h3>${product?.title}</h3>
+                <h4>${product?.description}</h4>
+                <p>₹${product?.price}</p>
+                <button onclick="removeFromWishlist(${product?.id})">Remove From Wishlist</button>
+            </div>
+        `).join('');
+    }
+    //Caching logic
+    if(Object.keys(wishlistData).length === wishlist.length){
+        renderWishlist(wishlistData);//No need to fetch data
+    }else{
+        const missingIds = wishlist.filter(id => !wishlistData[id])
+        const wishlistItems = await Promise.all(missingIds.map(id => api.fetchProductById(id)));
+        wishlistItems.forEach(product=>{
+            wishlistData[product.id] = product;
+        })
+        //update wishlist data
+        sessionStorage.setItem('wishlistData',JSON.stringify(wishlistData));
+        renderWishlist(wishlistData);
+    }
+
+    
+
+    window.removeFromWishlist = (productId) => {
+        wishlist = wishlist.filter(id => id !== productId);
+        delete wishlistData[productId];//remove product from cache
+        //update cache
+        sessionStorage.setItem('wishlistData', JSON.stringify(wishlistData));
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist));
+        //removing product from the UI
+        document.getElementById(`product-${productId}`).remove();
+        //update UI
+        updateCounters();
+        if(wishlist.length === 0){
+            wishlistContainer.innerHTML = "<p> Wishlist is empty.</p>";
+        }
+    };
+});
+
+cart.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/cart.css">
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav>
+
+
+    <h1 class="my-cart-heading">My Cart</h1>
+    <!-- Adding Product Dynamically -->
+    <div class="product-container" id="cartContainer"></div>
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/cart.js"></script>
+</body>
+</html>
+
+scripts/cart.js
+import API from './api.js';
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    const cartContainer = document.getElementById("cartContainer");
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    //implementing caching functionality
+    let cartData = JSON.parse(localStorage.getItem("cartData")) || {}; // Cached data
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+        console.log("adfasfdsdasdfdsf____asdsfasasdfadsf", cart.length);
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+
+    if (cart.length === 0) {
+        cartContainer.innerHTML = "<p>Cart is empty.</p>";
+        return;
+    }
+    //rendering cart
+    function renderCart(cartItems) {
+        cartContainer.innerHTML = Object.values(cartItems).map(product => `
+            <div class="product-card" id="product-${product.id}">
+            <img src="${product.thumbnail}" alt="${product.title}">
+            <h3>${product.title}</h3>
+            <h4>${product.description}</h4>
+            <p>₹${product.price}</p>
+            <button onclick="removeFromCart(${product.id})">Remove From Cart</button>
+            </div>
+            `).join('');
+    }
+
+    // Caching Logic: Load data from localStorage first
+    if (Object.keys(cartData).length === cart.length) {
+        renderCart(cartData);
+    } else {
+        const missingIds = cart.filter(id => !cartData[id]);
+        if (missingIds.length === 0) { 
+            renderCart(cartData);
+        } else {
+            const cartItems = await Promise.all(missingIds.map(id => api.fetchProductById(id)));
+            cartItems.forEach(product => {
+                cartData[product.id] = product;
+            });
+            localStorage.setItem("cartData", JSON.stringify(cartData)); // Cache update करो
+            renderCart(cartData);
+        }
+    }
+
+
+
+
+    // **Remove from cart without reloading**
+    window.removeFromCart = (productId) => {
+        cart = cart.filter(id => id !== productId);
+        delete cartData[productId];
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        localStorage.setItem("cartData", JSON.stringify(cartData));
+        //remove that product from UI
+        document.getElementById(`product-${productId}`).remove(); // Remove from DOM
+        updateCounters();
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = "<p>Cart is empty.</p>";
+        }
+    };
+});
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+
+
+
+bhai, pahle ham log add to cart cart aur wishlist page design kareng...
+home page ke each product par two buttons honge add to cart 
+src/features/cart/Cart.tsx 
+src/features/cart/styles.components.ts
+
+src/features/wishlist/Wishlist.tsx
+src/features/cart/styles.components.ts
+
+
+
+
+
+
+
+
+
+
+/*********************************************************************************************************************/
+
+
+
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation in hinglish, editor me code mat dena
+bhai, jaldi se add to cart aur add to wishlist wali fucntionilty complete karo
+home me saare prouduct par add to cart aur add to wishlist wala button bhi add kar dena
+
+
+
+
+bhai, pahle ab cart aur wishlist page design kareng...
+home page ke each product par two buttons honge add to cart aur add to wishlist
+src/features/cart/Cart.tsx 
+src/features/cart/styles.components.ts
+
+src/features/wishlist/Wishlist.tsx
+src/features/cart/styles.components.ts
+
+bhai, ab ese wishlistPage aur Cartpage me call kar do... 
+mai home page ka code deta hoon...esame add to cart aur add to wishlist wali functionilty add kar dena
+src/features/home/Home.tsx
+import React, { useEffect, useRef, useState } from "react";
+import api from "../../shared/utils/api";
+import Pagination from "../../shared/utils/Pagination";
+import { Product } from "../../shared/types";
+import { Container, ProductGrid, ProductCard, Image, Title, Price, PaginationContainer, Button } from "./styles.components";
+
+const Home = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [pageOffset, setPageOffset] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pagination = useRef(new Pagination(1));
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastProductRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    fetchProducts(1, pageOffset);
+  }, [pageOffset]);
+
+  useEffect(() => {
+    if (!lastProductRef.current) return;
+
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages) {
+          fetchProducts(currentPage + 1, pageOffset);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.current.observe(lastProductRef.current);
+
+    return () => {
+      if (observer.current) observer.current.disconnect();
+    };
+  }, [products]);
+
+  const fetchProducts = async (page: number, offset: number) => {
+    try {
+      const skip = (page - 1) * offset;
+      const response = await api.fetchAllProducts(offset, skip);
+      setProducts((prev) => [...prev, ...response.products]);
+      setTotalPages(Math.ceil(100 / offset));
+      pagination.current = new Pagination(totalPages);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  return (
+    <Container>
+      <div>
+        <label>Products Per Page:</label>
+        <select
+          value={pageOffset}
+          onChange={(e) => {
+            setProducts([]);
+            setPageOffset(Number(e.target.value));
+          }}
+        >
+          {[10, 20, 50, 100].map((num) => (
+            <option key={num} value={num}>
+              {num}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <ProductGrid>
+        {products.map((product, index) => (
+          <ProductCard key={product.id} ref={index === products.length - 1 ? lastProductRef : null}>
+            <Image src={product.thumbnail} alt={product.title} />
+            <Title>{product.title}</Title>
+            <Price>${product.price}</Price>
+          </ProductCard>
+        ))}
+      </ProductGrid>
+        
+      <PaginationContainer>
+        <Button disabled={currentPage === 1} onClick={() => fetchProducts(pagination.current.prevPage(), pageOffset)}>
+          Prev
+        </Button>
+        {pagination.current.getPages().map((page, index) => (
+          <Button key={index} disabled={page === currentPage} onClick={() => typeof page === "number" && fetchProducts(page, pageOffset)}>
+            {page}
+          </Button>
+        ))}
+        <Button disabled={currentPage === totalPages} onClick={() => fetchProducts(pagination.current.nextPage(), pageOffset)}>
+          Next
+        </Button>
+      </PaginationContainer>
+    </Container>
+  );
+};
+
+export default Home;
+
+bhai, ye CartContext.tsx aur WishlistContext.tsx  pahale se bana hai... ek baar dekh lo aur aage ke step par badho...
+
+
+WishlistContext.tsx
+import React, { createContext, useContext, useState } from "react";
+
+interface WishlistItem {
+  id: number;
+  title: string;
+  thumbnail: string;
+  price: number;
+  description: string;
+}
+
+interface WishlistContextType {
+  wishlist: WishlistItem[];
+  addToWishlist: (item: WishlistItem) => void;
+  removeFromWishlist: (id: number) => void;
+  wishlistCount: number;
+}
+
+const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+
+export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [wishlist, setWishlist] = useState<WishlistItem[]>(() => {
+    return JSON.parse(sessionStorage.getItem("wishlist") || "[]");
+  });
+
+  const addToWishlist = (item: WishlistItem) => {
+    if (!wishlist.find((p) => p.id === item.id)) {
+      setWishlist([...wishlist, item]);
+      sessionStorage.setItem("wishlist", JSON.stringify([...wishlist, item]));
+    }
+  };
+
+  const removeFromWishlist = (id: number) => {
+    const updatedWishlist = wishlist.filter((item) => item.id !== id);
+    setWishlist(updatedWishlist);
+    sessionStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+  };
+
+  return (
+    <WishlistContext.Provider value={{ wishlist, addToWishlist, removeFromWishlist, wishlistCount: wishlist.length }}>
+      {children}
+    </WishlistContext.Provider>
+  );
+};
+
+export const useWishlist = () => {
+  const context = useContext(WishlistContext);
+  if (!context) {
+    throw new Error("useWishlist must be used within a WishlistProvider");
+  }
+  return context;
+};
+
+ CartContext.tsx
+ import React, { createContext, useContext, useState, useEffect } from "react";
+
+// Define types for Cart Items
+interface CartItem {
+  id: number;
+  title: string;
+  thumbnail: string;
+  price: number;
+  description: string;
+}
+
+interface CartContextType {
+  cart: CartItem[];
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (id: number) => void;
+  cartCount: number;
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    return JSON.parse(localStorage.getItem("cart") || "[]");
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (item: CartItem) => {
+    if (!cart.find((p) => p.id === item.id)) {
+      setCart([...cart, item]);
+    }
+  };
+
+  const removeFromCart = (id: number) => {
+    setCart(cart.filter((item) => item.id !== id));
+  };
+
+  return (
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, cartCount: cart.length }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
+  }
+  return context;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+aage badho bhai, ye bhi functionaity add karo 
+home page me
+jo product already cart me ho vaha... add to cart ke jagah remove from cart aa jana chahiye
+jo product already wishlist me ho vaha... add to wishlist ke jagah remove from wishlist aa jana chahiye
+
+
+bhai, navbar me ye bhi karan h
+cart aur wishlist ke icon par number of product show hona chahiye...
+
+api ka use karake categories render karvao
+category ke base par data api se render ho hokar aaye...
+
+search functionaity complete karo.... with debouncing
+jo bhi data aa gaya ho usi me se filter karake show karo.
+
+current Navbar.tsx
+import { AppBar, Toolbar, Typography, Box, IconButton, TextField, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { ShoppingCart, Favorite } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+
+const categories = ["All Categories", "Electronics", "Clothing", "Home Appliances", "Books", "Toys"];
+
+const Navbar = ({ onSearch, onFilter }: { onSearch: (query: string) => void; onFilter: (category: string) => void }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+
+  // Handle category change
+  const handleCategoryChange = (event: SelectChangeEvent) => {
+    const category = event.target.value;
+    setSelectedCategory(category);
+    onFilter(category);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    onSearch(query);
+  };
+
+  return (
+    <AppBar position="sticky" sx={{ backgroundColor: "#fff", color: "#000" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        
+        {/* Left: Logo */}
+        <Typography variant="h6" component={Link} to="/" sx={{ textDecoration: "none", color: "inherit" }}>
+          eShop
+        </Typography>
+
+        {/* Middle: Filter & Search */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {/* Category Filter */}
+          <Select size="small" value={selectedCategory} onChange={handleCategoryChange} sx={{ minWidth: 150 }}>
+            {categories.map((category) => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+
+          {/* Search Bar */}
+          <TextField 
+            size="small" 
+            placeholder="Search products..." 
+            value={searchQuery} 
+            onChange={handleSearchChange} 
+          />
+        </Box>
+
+        {/* Right: Cart & Wishlist */}
+        <Box>
+          <IconButton component={Link} to="/wishlist">
+            <Favorite color="primary" />
+          </IconButton>
+          <IconButton component={Link} to="/cart">
+            <ShoppingCart color="primary" />
+          </IconButton>
+        </Box>
+
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Navbar;
+
+
+
+
+
+Assigned Task:
+Task #12233	
+Task #12234
+Task #12235
+Task #12236
+Task #12237
+Task #12238	
+Task #10710	
+Task #10709
+Task #10711	
+Task #10701
+
+
+Completed Task:
+Task #12233	
+Task #12234
+Task #12235
+Task #12236
+Task #12237
+Task #12238	
+Task #10710	
+Task #10709
+Task #10711	(Redo)
+Task #10701 (Redo)
+
+
+
+

@@ -1,0 +1,27 @@
+/ecommerce-app  
+│── /src  
+│   │── /app  
+│   │   │── /router        # React Router configuration  
+│   │   │── /layout        # Layout components (Navbar, Footer, etc.)  
+│   │── /pages  
+│   │   │── Home.tsx  
+│   │   │── Product.tsx  
+│   │   │── Cart.tsx  
+│   │   │── Wishlist.tsx  
+│   │   │── Login.tsx  
+│   │   │── Signup.tsx  
+│   │── /features  
+│   │   │── /cart          # Cart-related logic and components  
+│   │   │── /wishlist      # Wishlist-related logic and components  
+│   │   │── /auth          # Login and Signup logic  
+│   │   │── /product       # Product listing and details  
+│   │── /shared  
+│   │   │── /components    # Common reusable components  
+│   │   │── /hooks         # Custom hooks (useAppNavigate, etc.)  
+│   │   │── /utils         # Helper functions, API fetcher, pagination  
+│   │   │── /context       # Context API providers (CartContext, AuthContext, etc.)  
+│── /public  
+│── index.tsx  
+│── App.tsx  
+│── tsconfig.json  
+│── package.json  

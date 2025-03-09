@@ -1,1 +1,6 @@
 1. Create a simple nav Bar with button Home, About, Services and Contact Us with search icon.
+2. esa search banao jisase user jab tak type kare tab tak api call na ho.
+3. esa button banao jisase user ke bar bar click karane par bhi vo kuch time interval ke baad hee call ho.
+4. ek multidimentional array lo use flat kar do, bina flat() function ka use kiye.
+5. ek object ka deep clone karo bina stringify ka use kiye.
+6. ek esa function banao jisame me chahe jitana number pass karu (undefined), vo un saro ka sum return kar de.

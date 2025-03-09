@@ -1,0 +1,15 @@
+//remove duplicacy
+        // let newProducts = response.products.filter(product => {
+        //     if (loadedProductIds.has(product.id)) {
+        //         return false;
+        //     }
+        //     loadedProductIds.add(product.id); //Add new product ID to Set
+        //     return true;
+        // });
+
+        // if (page === 1) {
+        //     allLoadedProducts = newProducts;  //First load: Replace all products
+        //     productContainer.innerHTML = "";
+        // } else {
+        //     allLoadedProducts.push(...newProducts); //Append unique products only
+        // }

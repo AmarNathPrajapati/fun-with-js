@@ -1,0 +1,119 @@
+bhai, ek chat start karo jisame ham step by step ek simple eCommerce website develop karenge
+poore project ko React, typeScript aur Material me banani hai...
+designing ke liye material UI use karani hai.
+modular code hoga... means sabhi ke liye seprate files
+proper folder structure follow karenge...
+
+
+Requirement must be implemeted:
+    Context API
+    React-Router Dom and Outlet
+    custom navigate: UseAppNavigate
+    jab kisi product par navigate karu toh bas aage /product/id add ho
+    path ka ek object banana hai, typescript ka fuction keval valid path lagega
+
+    folder structure jo senior ne bataya to follow:
+
+/ecommerce-app  
+│── /src  
+│   │── /app  
+│   │   │── router/Router.tsx        # React Router configuration  
+│   │   │── layout/Layout.tsx        # Layout components (Navbar, Footer, etc.)  
+│   │── /pages  
+│   │   │── HomePage.tsx             # only call home.tsx from features
+│   │   │── ProductPageg.tsx         # only call Product.tsx from features  and so on      
+│   │   │── CartPage.tsx  
+│   │   │── Wishlistpage.tsx  
+│   │   │── LoginPage.tsx  
+│   │   │── SignupPage.tsx  
+│   │── /features  
+│   │   │── cart -->Cart.tsx and           # Cart-related logic and components  
+│   │   │── wishlist --> Wishlist.tsx and styles.components.ts     # Wishlist-related logic and components  
+│   │   │── auth   -->       # Login and Signup logic  
+│   │   │── product  --->Product.tsx and styles.components.ts
+        |-- home --> Home.tsx and styles.components.ts   # Product listing and details  
+│   │── /shared  
+│   │   │── /components    # Common reusable components  
+│   │   │── /hooks         # Custom hooks (useAppNavigate, etc.)  
+│   │   │── /utils         # Helper functions, API fetcher, pagination  
+│   │   │── /context       # Context API providers (CartContext, AuthContext, etc.)  
+|   |   /entity
+|   |   |--Navbar --> Navbar.tsx and styles.components.ts
+|   |   |--Footer --> Footer.tsx and styles.components.ts
+│── /public  
+│── index.tsx  
+│── App.tsx  
+│── tsconfig.json  
+│── package.json 
+
+
+Requirements:
+eCommerce website me pages hoge
+login page 
+Signup Page
+Home page -> list of products
+Product page -> product details page
+cart page -> products in cart
+wishlist page-> product in wishlist
+
+
+Home page
+    Navbar:
+        left me logo hoga... middle me filter hoga aur search bar hoga....right me cart aur wishlist ka button hoga
+        filter:
+            filter category aur price ke basis par filter karega...
+        Search:
+            search name aur category ke basis par result dega...
+        cart:
+            jaise hee product ko add to cart kiya jayega vo cart me show ho jayega
+            aur agar user browser close karake dobara open kare toh cart me product hone chahiye
+        wishlist:
+            jaise hee product ko add to wishlist kiya jayega vo wishlist me show ho jayega
+            aur agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+    Container:
+        Container me infinite scrolling hongi
+        conntainer me product ko show karenge with its details
+        har product me two button honge add to cart and add to wishlist
+
+        add to cart:
+            jaise user add to cart button par click karega product cart me chala jayega
+            data es tarah store karana hai ki agar user browser close karake dobara open kare toh cart me product hone chahiye
+
+        add to wishlist:
+            jaise user add to wishlist button par click karega product wishlist me chala jayega
+            data es tarah store karana hai ki agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+    bottom:
+        yaha par bhai pagination implement hoga
+        pagination two part me hoga 
+        first part: set number of prouduct par page
+        second part : actual pagination
+
+        pagination:
+            prev aur next button hoga.
+            initially ese show hoga (1,2,3...9,10)
+            by default 1st wala page show ho.
+            maan lo user 6th page par aa gaya toh ab page ese show hoga (1,2,3...5,6,7...9,10)
+            logic me ho sake binary search implement karana
+
+Product page:
+    jab bhi user poduct par click kareng toh project ki page open ho hayegi with its all details and picture.
+
+
+Note: 
+    script:
+    API Class:
+        ek Generic Class API hogi usi ke andar API se related sabhi method honge
+        API class ke instance se API related operation perform honge
+        API ek fetcher class hogi jisake method ka ham use karenge...
+        almost sabhi common method use karenge... Get, Post, Put, Patch and delete.
+
+    Pagination Class:
+        handle pagination related method
+
+    infinie scorlling ke liye intersection observer ka use karana hai
+    css likhane ka sahi sequence follow karana hai, width->hight->.....->margin padding
+
+
+    

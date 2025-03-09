@@ -1,0 +1,4545 @@
+bhai, ek chat start karo jisame ham step by step ek simple eCommerce website develop karenge
+poore project ko simple html, CSS and JavaScript me banani hai...
+modular code hoga... means sabhi ke liye seprate files
+
+Requirements:
+eCommerce website me pages hoge
+first page -> list of products
+second page -> product details page
+cart page -> products in cart
+wishlist page-> product in wishlist
+
+Home page
+    Navbar:
+        left me logo hoga... middle me filter hoga aur search bar hoga....right me cart aur wishlist ka button hoga
+        filter:
+            filter category aur price ke basis par filter karega...
+        Search:
+            search name aur category ke basis par result dega...
+        cart:
+            jaise hee product ko add to cart kiya jayega vo cart me show ho jayega
+            aur agar user browser close karake dobara open kare toh cart me product hone chahiye
+        wishlist:
+            jaise hee product ko add to wishlist kiya jayega vo wishlist me show ho jayega
+            aur agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+    Container:
+        Container me infinite scrolling hongi
+        conntainer me product ko show karenge with its details
+        har product me two button honge add to cart and add to wishlist
+
+        add to cart:
+            jaise user add to cart button par click karega product cart me chala jayega
+            data es tarah store karana hai ki agar user browser close karake dobara open kare toh cart me product hone chahiye
+
+        add to wishlist:
+            jaise user add to wishlist button par click karega product wishlist me chala jayega
+            data es tarah store karana hai ki agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+    bottom:
+        yaha par bhai pagination implement hoga
+        pagination two part me hoga 
+        first part: set number of prouduct par page
+        second part : actual pagination
+
+        pagination:
+            prev aur next button hoga.
+            initially ese show hoga (1,2,3...9,10)
+            by default 1st wala page show ho.
+            maan lo user 6th page par aa gaya toh ab page ese show hoga (1,2,3...5,6,7...9,10)
+            logic me ho sake binary search implement karana
+
+Product page:
+    jab bhi user poduct par click kareng toh project ki page open ho hayegi with its all details and picture.
+
+
+Note: 
+    script:
+    API Class:
+        ek class API hogi usi ke andar API se related sabhi method honge
+        API class ke instance se API related operation perform honge
+        
+    Pagination Class:
+        handle pagination related method
+
+    infinie scorlling ke liye intersection observer ka use karana hai
+    css likhane ka sahi sequence follow karana hai, width->hight->.....->margin padding
+
+
+
+bhai, abhi code mat do bas ye batao ki tum kya kya samajhe aur kya planning hai..
+step by step complete karenga
+
+
+
+
+
+
+
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+
+
+
+
+
+
+
+
+bhai, ham log products ke liye ye saare APIs ka use karenge... ek baar achchhe se dekh lo aur samajah lo...
+
+DummyJSON
+The products endpoint provides a comprehensive dataset of sample product information, including details like names, prices, descriptions, images, and categories, ideal for testing and prototyping e-commerce applications.
+
+Get all products
+By default you will get 30 items, use Limit and skip to paginate through all items.
+
+fetch('https://dummyjson.com/products')
+.then(res => res.json())
+.then(console.log);
+Get a single product
+fetch('https://dummyjson.com/products/1')
+.then(res => res.json())
+.then(console.log);
+Search products
+fetch('https://dummyjson.com/products/search?q=phone')
+.then(res => res.json())
+.then(console.log);
+Limit and skip products
+You can pass limit and skip params to limit and skip the results for pagination, and use limit=0 to get all items.
+
+You can pass select as query params with comma-separated values to select specific data
+
+fetch('https://dummyjson.com/products?limit=10&skip=10&select=title,price')
+.then(res => res.json())
+.then(console.log);
+Sort products
+You can pass sortBy and order params to sort the results, sortBy should be field name and order should be "asc" or "desc"
+
+fetch('https://dummyjson.com/products?sortBy=title&order=asc')
+.then(res => res.json())
+.then(console.log);
+Get all products categories
+fetch('https://dummyjson.com/products/categories')
+.then(res => res.json())
+.then(console.log);
+Get products category list
+fetch('https://dummyjson.com/products/category-list')
+.then(res => res.json())
+.then(console.log);
+Get products by a category
+fetch('https://dummyjson.com/products/category/smartphones')
+.then(res => res.json())
+.then(console.log);
+Add a new product
+Adding a new product will not add it into the server.
+It will simulate a POST request and will return the new created product with a new id
+
+fetch('https://dummyjson.com/products/add', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    title: 'BMW Pencil',
+    /* other product data */
+  })
+})
+.then(res => res.json())
+.then(console.log);
+Update a product
+Updating a product will not update it into the server.
+It will simulate a PUT/PATCH request and will return updated product with modified data
+
+/* updating title of product with id 1 */
+fetch('https://dummyjson.com/products/1', {
+  method: 'PUT', /* or PATCH */
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    title: 'iPhone Galaxy +1'
+  })
+})
+.then(res => res.json())
+.then(console.log);
+Delete a product
+Deleting a product will not delete it into the server.
+It will simulate a DELETE request and will return deleted product with isDeleted & deletedOn keys
+
+fetch('https://dummyjson.com/products/1', {
+  method: 'DELETE',
+})
+.then(res => res.json())
+.then(console.log);
+
+
+
+bhai, phase 1 start karate hai...
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+
+Bhai, maine pura project scope samajh liya hai. Ye ek simple **modular eCommerce website** hogi jo **HTML, CSS, aur JavaScript** me develop hogi.  
+
+### 🔍 **Meri Planning:**
+Is project ko **step-by-step** develop karenge taaki har ek feature samajhne me easy ho. Pehle basic structure banayenge, phir **functionality** add karenge, aur **optimization** karenge.  
+
+---
+
+## **🛠️ Development Steps (Phase-wise Approach)**
+### **Phase 1: Basic Structure & Setup**
+- 🏗️ **Project Structure Define Karna (Folder & Files)**
+  - `index.html` → Home Page (Product Listing)
+  - `product.html` → Product Details Page
+  - `cart.html` → Cart Page
+  - `wishlist.html` → Wishlist Page
+  - `styles/` → CSS Files (modular approach)
+  - `scripts/` → JavaScript Files (modular approach)
+  - `data/` → Dummy JSON Data  
+- 🎨 **Basic UI Design using HTML & CSS** (Navbar, Container, Buttons)
+- 🔗 **Page Navigation Setup** (Routing via simple anchor tags)
+
+---
+
+### **Phase 2: Functional Implementation**
+- 🛒 **Cart System Implement Karna**
+  - **LocalStorage** use karenge taaki data browser close hone ke baad bhi save rahe.  
+  - **"Add to Cart" Button Functionality**  
+  - **Cart Page me Products Display Karna**  
+  - **Remove from Cart Feature**  
+
+- ❤️ **Wishlist System Implement Karna**
+  - Wishlist bhi **LocalStorage** me store hogi  
+  - "Add to Wishlist" button functionality  
+  - Wishlist Page me products show karna  
+  - Wishlist clear hone ka logic likhna (browser restart hone par)  
+
+---
+
+### **Phase 3: Product Display & Filtering**
+- 🔍 **Filter System Implement Karna**
+  - **Category-wise Filtering**  
+  - **Price Range Filtering**  
+
+- 🏷️ **Search System Implement Karna**
+  - **Product Name & Category ke basis par Search**  
+
+- 🔄 **Infinite Scrolling (Intersection Observer)**
+  - API se dynamically aur products load karna  
+
+- 🔢 **Pagination Implementation**
+  - **Pagination Class** banayenge jo har page pe products control karega  
+  - **Binary Search Logic** se pagination ko optimize karenge  
+
+---
+
+### **Phase 4: Final Enhancements**
+- 📄 **Product Details Page**
+  - Jab user kisi product par click kare, toh uska detail page open ho  
+  - Product ki **Image, Description, Price, etc.** dikhane honge  
+
+- 🎭 **UI Enhancements (CSS Improvements)**
+  - Responsive Design  
+  - Proper CSS Flow (width → height → margin → padding)  
+
+- 🚀 **Code Optimization & Testing**
+  - Code cleanup  
+  - Performance improvements  
+
+---
+
+## **⏳ Next Step:**
+Sabse pehle **Phase 1 start karenge** → **Project structure banayenge aur basic UI setup karenge** 🚀  
+Batado, **koi aur feature add karna hai ya isko start karein?**
+
+
+/ecommerce-project
+│── index.html         (Home Page - Product Listing)
+│── product.html       (Product Details Page)
+│── cart.html          (Cart Page)
+│── wishlist.html      (Wishlist Page)
+│── styles/
+│   ├── style.css      (Global Styles)
+│   ├── navbar.css     (Navbar Specific Styles)
+│── scripts/
+│   ├── app.js         (Main JavaScript File)
+│── data/
+│   ├── products.json  (Dummy Product Data - Optional)
+
+
+Ha bhai, dhyan rakhan ki
+API Class:
+        ek class API hogi usi ke andar API se related sabhi method honge
+        API class ke instance se API related operation perform honge
+
+product.html
+Cart.html
+wishlist.html 
+
+bhi implement kar dena
+
+
+bhai, meri baat bahut dhyan se samajho
+jaha bhi API call karo API class ke instance se hee karo
+
+Filter System Implement Karna
+    Only category-wise Filtering
+
+Search:
+    search name or category ke basis par result dega...
+    search result usi page se aana chahiye... global search nahi hona chahiye
+
+aur bhai, mujhe zara pagination ka at least structure de do so that use ham show kar sake
+Paging ka structure
+            prev aur next button hoga.
+            initially ese show hoga (1,2,3..................98,99,100(suppose))
+            by default 1st wala page show ho.
+            maan lo user 50th page par aa gaya toh ab page ese show hoga (1,2,3...........49,50,51..............98,99,100)
+            logic me ho sake binary search implement karana
+
+Pagination Implementation**
+  Pagination Class banayenge jo har page pe products control karega  
+  Binary Search Logicse pagination ko optimize karenge
+
+
+
+
+bhai, mujhe basic concept samajhao step by step details me ekdum
+1. Search functionlity
+2. Pagination functionality (binary Search)
+3. Infinite Scrolling
+
+Bhai, ek concept aur samajhana ki 
+mujhe cart aur wishlist banana hayegi
+add to cart:
+    jaise user add to cart button par click karega product cart me chala jayega
+    data es tarah store karana hai ki agar user browser close karake dobara open kare toh cart me product hone chahiye
+add to wishlist:
+      jaise user add to wishlist button par click karega product wishlist me chala jayega
+      data es tarah store karana hai ki agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+
+
+
+bhai, mujhe ek product container chahiye jisame ye saari functioinality ho
+1. width aur height fix rakho
+2. container ke andar infinite scolling ho using intersection observer
+
+
+
+
+
+
+
+bhai, ye line error de raha hai
+observer.observe(document.getElementById("scrollEnd"));
+
+tumhare reference ke liye mai 
+index.html de raha hoon
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCommerce - Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div>
+            <a class="logo" href="./index.html">
+                ShopLogo
+            </a>
+        </div>
+        <div class="search-filter">
+            <input type="text" placeholder="Search products..." id="searchBox">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+        </div>
+        <div class="nav-links">
+            <a href="wishlist.html">❤️ Wishlist</a>
+            <a href="cart.html">🛒 Cart</a>
+        </div>
+    </nav>
+    <!-- Product Container -->
+    <div class="product-container" id="productContainer"></div>
+    <!-- Pagination -->
+    <div class="pagination" id="paginationContainer">
+
+    </div>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/pagination.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/product.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+bhai, requirement samajho dhyan se
+1. search functionality
+hame search API ke thru nahi karana hai, jitane data load hua hai usi me se filter karake lana hai
+
+2. Infinite scolling and Paging
+maan lo ek page me 20 product show ho rahe hai, jaise hee user last product tah pahuchahta hai, infinite scroll call ho, naye page ka product append ho jaye, next page i.e 2 hilight ho jaye
+pagination:
+            prev aur next button hoga.
+            initially ese show hoga (1,2,3...9,10)
+            by default 1st wala page show ho.
+            maan lo user 6th page par aa gaya toh ab page ese show hoga (1,2,3...5,6,7...9,10)
+            logic me ho sake binary search implement karana
+
+
+reference ke liye mai code de deta hoon.
+app.js
+import Pagination from './pagination.js'
+import API from './api.js'; // Ensure correct file path
+
+const api = new API('https://dummyjson.com');
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const productContainer = document.getElementById("productContainer");
+    const searchBox = document.getElementById("searchBox");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    let isFetching = false;
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    async function loadProducts(page = 1, category = "", searchQuery = "") {
+        if (isFetching) return;
+        isFetching = true;
+        
+        productContainer.innerHTML += "<p>Loading...</p>";
+        let skip = (page - 1) * pageSize;
+        let response;
+
+        if (searchQuery) {
+            response = await api.searchProducts(searchQuery);
+        } else if (category) {
+            response = await api.fetchProductsByCategory(category, pageSize, skip);
+        } else {
+            response = await api.fetchAllProducts(pageSize, skip);
+        }
+
+        totalProducts = response.total || 100;
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+        productContainer.innerHTML =
+            response.products.map(product => `
+                <div class="product-card">
+                    <img src="${product.thumbnail}" alt="${product.title}">
+                    <h3>${product.title}</h3>
+                    <p>₹${product.price}</p>
+                    <a href="product.html?id=${product.id}" style="display: inline-block; margin: 10px;">View Details</a></br>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                    <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+                </div>
+            `).join('');
+
+        renderPagination();
+        isFetching = false;
+    }
+
+
+    // Ensure these functions are globally accessible**
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+    function gotoPage(page) {
+        if (page !== "...") {
+            currentPage = page;
+            loadProducts(currentPage, categoryFilter.value, searchBox.value);
+        }
+    }
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+    function renderPagination() {
+        let pages = pagination.getPages();
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()">⬅</button>
+            ${pages.map(page => `<button onclick="gotoPage(${page})">${page}</button>`).join('')}
+            <button onclick="nextPage()">➡</button>
+        `;
+    }
+     
+     function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    
+    // Use debounce properly
+    const debounceSearch = debounce((page, category, query) => {
+        loadProducts(page, category, query);
+    }, 1000);
+    
+    // Call debounceSearch correctly
+    searchBox.addEventListener("input", () => {
+        debounceSearch(1, categoryFilter.value, searchBox.value);
+    });
+    
+
+    categoryFilter.addEventListener("change", () => {
+        loadProducts(1, categoryFilter.value);
+    });
+
+    // Infinite Scroll using IntersectionObserver
+    const observer = new IntersectionObserver(entries => {
+        console.log("asdsfasdasd___asdsfasdadsffddsfa");
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {
+            currentPage++;
+            loadProducts(currentPage, categoryFilter.value, searchBox.value);
+        }
+    }, { threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+
+    loadProducts();
+});
+
+api.js
+export default class API {
+    constructor(baseURL) {
+        this.baseURL = baseURL;
+    }
+    //API for fetch all the products
+    async fetchAllProducts(limit = 100, skip = 0) {
+        const response = await fetch(`${this.baseURL}/products?limit=${limit}&skip=${skip}`);
+        return response.json();
+    }
+    //API for fetch product details by ID 
+    async fetchProductById(id) {
+        const response = await fetch(`${this.baseURL}/products/${id}`);
+        return response.json();
+    }
+    //API for fetch product by category
+    async fetchProductsByCategory(category, limit = 30, skip = 0) {
+        const response = await fetch(`${this.baseURL}/products/category/${category}?limit=${limit}&skip=${skip}`);
+        return response.json();
+    }
+    //search Query
+    async searchProducts(query) {
+        const response = await fetch(`${this.baseURL}/products/search?q=${query}`);
+        return response.json();
+    }
+}
+
+// API Instance
+const api = new API('https://dummyjson.com');
+
+pagination.js
+export default class Pagination {
+    constructor(totalPages) {
+        this.totalPages = totalPages;
+        this.currentPage = 1;
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+        }
+        return this.currentPage;
+    }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+        }
+        return this.currentPage;
+    }
+
+    getPages() {
+        let pages = [1, 2, 3,];
+        // if current page ahead of more than three pages
+        if (this.currentPage > 3) {
+            pages.push('...');
+            for (let i = this.currentPage - 1; i <= this.currentPage + 1; i++) {
+                if (i > 3 && i < this.totalPages) pages.push(i);
+            }
+        }
+        //if more than 3 pages are ahead than current page
+        if (this.currentPage < this.totalPages - 3) {
+            pages.push('...');
+        }
+        //adding last two pages
+        pages.push(this.totalPages - 1, this.totalPages);
+        return pages;
+    }
+}
+
+
+
+
+
+bhai, infinite scroll kam hee nahi kar raha, 
+mai scroll karake last tak aa jata hoon fir bhi call nahi hota
+dekhana zara kya baat hai
+
+reference ke liye
+index.html  bhi dekh lo
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCommerce - Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div>
+            <a class="logo" href="./index.html">
+                ShopLogo
+            </a>
+        </div>
+        <div class="search-filter">
+            <input type="text" placeholder="Search products..." id="searchBox">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+        </div>
+        <div class="nav-links">
+            <a href="wishlist.html">❤️ Wishlist</a>
+            <a href="cart.html">🛒 Cart</a>
+        </div>
+    </nav>
+    <!-- Product Container -->
+    <div class="product-container" id="productContainer">
+
+        <div id="scrollEnd" style="height: 20px;"></div>
+    </div>
+    <!-- Pagination -->
+    <div class="pagination" id="paginationContainer">
+    <!-- Scroll End Detector -->
+    </div>
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/pagination.js"></script>
+    <script type="module" src="scripts/app.js"></script>
+    <script type="module" src="scripts/product.js"></script>
+
+</body>
+</html>
+
+bhai, mujhe issue samajh me aa gaya 
+api call hone se pahale scollend aata hai but API call hone ke baad hat jata hai
+
+reference
+app.js
+import Pagination from './pagination.js'
+import API from './api.js';
+
+const api = new API('https://dummyjson.com');
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const productContainer = document.getElementById("productContainer");
+    const searchBox = document.getElementById("searchBox");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    let isFetching = false;
+    let allLoadedProducts = []; //Store all fetched data
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    async function loadProducts(page = 1, category = "") {
+        if (isFetching) return;
+        isFetching = true;
+
+        let skip = (page - 1) * pageSize;
+        let response = category ? 
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+        if (page === 1) {
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+    function renderProducts(products) {
+        productContainer.innerHTML = products.map(product => `
+            <div class="product-card">
+                <img src="${product.thumbnail}" alt="${product.title}">
+                <h3>${product.title}</h3>
+                <p>₹${product.price}</p>
+                <a href="product.html?id=${product.id}" style="display: inline-block; margin: 10px;">View Details</a></br>
+                <button onclick="addToCart(${product.id})">Add to Cart</button>
+                <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+            </div>
+        `).join('');
+    }
+
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts);
+    }
+
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+
+    categoryFilter.addEventListener("change", () => {
+        loadProducts(1, categoryFilter.value);
+    });
+    
+
+    function gotoPage(page) {
+        if (page !== "...") {
+            currentPage = page;
+            loadProducts(currentPage, categoryFilter.value);
+        }
+    }
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+    // Ensure these functions are globally accessible**
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+    function renderPagination() {
+        let pages = pagination.getPages();
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()">⬅</button>
+            ${pages.map(page => `<button onclick="gotoPage(${page})">${page}</button>`).join('')}
+            <button onclick="nextPage()">➡</button>
+        `;
+    }
+
+    // Infinite Scroll using IntersectionObserver
+    const observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {
+            console.log("Infinite Scroll Triggered! Loading next set...asdfasdfadsdfsdsfdfs");
+            currentPage++;
+            loadProducts(currentPage, categoryFilter.value);
+        }
+    },{ root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+
+    loadProducts();
+});
+
+
+bhai, problem ye ho rahi hai jaise hee search fucntionality ke taraf se render ho raha hai
+observer #srcollEnd ko observe kar le raha hai aur data append kar de raha hai
+
+reference ke liye
+import Pagination from './pagination.js'
+import API from './api.js';
+
+const api = new API('https://dummyjson.com');
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const productContainer = document.getElementById("productContainer");
+    const searchBox = document.getElementById("searchBox");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    let isFetching = false;
+    let allLoadedProducts = []; //Store all fetched data
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    async function loadProducts(page = 1, category = "") {
+        if (isFetching) return;
+        isFetching = true;
+
+        let skip = (page - 1) * pageSize;
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+        if (page === 1) {
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+    function renderProducts(products) {
+        console.log("asdfasdfadsf___asfasdf");
+        productContainer.innerHTML = products.map(product => `
+            <div class="product-card">
+                <img src="${product.thumbnail}" alt="${product.title}">
+                <h3>${product.title}</h3>
+                <p>₹${product.price}</p>
+                <a href="product.html?id=${product.id}" style="display: inline-block; margin: 10px;">View Details</a></br>
+                <button onclick="addToCart(${product.id})">Add to Cart</button>
+                <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+            </div>
+        `).join('');
+    
+        // 🔥 **Fix: Ensure `#scrollEnd` is always there after search**
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "10px"; // Ensure it has height
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        
+        observer.observe(scrollEnd); // 🔥 Ensure observer is re-attached
+    }
+
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        console.log("adfsasdfdsdfads____filter",filteredProducts);
+        renderProducts(filteredProducts);
+    }
+
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+
+    categoryFilter.addEventListener("change", () => {
+        loadProducts(1, categoryFilter.value);
+    });
+
+
+    function gotoPage(page) {
+        if (page !== "...") {
+            currentPage = page;
+            loadProducts(currentPage, categoryFilter.value);
+        }
+    }
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+    // Ensure these functions are globally accessible**
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+    function renderPagination() {
+        let pages = pagination.getPages();
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()">⬅</button>
+            ${pages.map(page => `<button onclick="gotoPage(${page})">${page}</button>`).join('')}
+            <button onclick="nextPage()">➡</button>
+        `;
+    }
+
+    // Infinite Scroll using IntersectionObserver
+    const observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {
+            console.log("Infinite Scroll Triggered! Loading next set...asdfasdfadsdfsdsfdfs");
+            currentPage++;
+            loadProducts(currentPage, categoryFilter.value);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "10px", threshold: 0.1 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+
+    loadProducts();
+});
+
+
+bhai, mai toh ye chahata hoon ki search wala content rahe
+tum toh bus 1/2 second ke liye dikha rahe ho
+koi badhiya solution nikalo
+
+
+bhai,
+
+
+
+problem 1:
+scroll up hone par page ka hilight na hona...
+
+bhai, searching aur inifinite scrolling ekdum mast chal rahi hai...bas ab pagination add karana hai
+ab searching aur infinite scrolling ke code ko mat change karana
+pagination:
+  dhyan rahe duplicate element show na ho
+  button dynamic change hote rahe according to page number
+  jaise hee user scroll kare aur next content upload ho
+  page 2 hilight ho jaye
+  user scoll kare aur next content upload ho
+  page 3 hilight ho jaye
+  user pagination ke kisi button e.g 2 par click kare toh page 2 ka content dikhane scoll up ho jaye
+  
+  e.g. user 6th page par aaye toh button ese ho jaye
+  <-1,2,3 .... 5,6,7....9 10 ->
+  jab page 1 par ho toh previous disable ho jaye
+  aur jab last page par ho toh next desable ho jaye
+
+bhai, ek baar padh ke batao ki samajh gaye ki nahi aur kaise karoge ye bhi batana
+
+lo bhai
+  reference ke liye
+  pagination.js
+export default class Pagination {
+    constructor(totalPages) {
+        this.totalPages = totalPages;
+        this.currentPage = 1;
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+        }
+        return this.currentPage;
+    }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+        }
+        return this.currentPage;
+    }
+
+    getPages() {
+        let pages = [1, 2, 3,];
+        // if current page ahead of more than three pages
+        if (this.currentPage > 3) {
+            pages.push('...');
+            for (let i = this.currentPage - 1; i <= this.currentPage + 1; i++) {
+                if (i > 3 && i < this.totalPages) pages.push(i);
+            }
+        }
+        //if more than 3 pages are ahead than current page
+        if (this.currentPage < this.totalPages - 3) {
+            pages.push('...');
+        }
+        //adding last two pages
+        pages.push(this.totalPages - 1, this.totalPages);
+        return pages;
+    }
+}
+
+  app.js
+
+  import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    const productContainer = document.getElementById("productContainer");
+    const searchBox = document.getElementById("searchBox");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    let isFetching = false;
+    let allLoadedProducts = []; //Store all fetched data
+    let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    async function loadProducts(page = 1, category = "") {
+        if (isFetching) return;
+        isFetching = true;
+
+        let skip = (page - 1) * pageSize;
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+        if (page === 1) {
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            productContainer.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <img src="${product.thumbnail}" alt="${product.title}">
+                    <h3>${product.title}</h3>
+                    <p>₹${product.price}</p>
+                    <a href="product.html?id=${product.id}" style="display: inline-block; margin: 10px;">View Details</a></br>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                    <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+                </div>
+            `).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "10px"; // Ensure it has height
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+
+        //**Observer ko sirf tab re-attach karo jab search OFF ho**
+        observer.observe(scrollEnd);
+        console.log("Observer RE-ENABLED");
+    }
+
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+
+    categoryFilter.addEventListener("change", () => {
+        loadProducts(1, categoryFilter.value);
+    });
+
+
+    function gotoPage(page) {
+        if (page !== "...") {
+            currentPage = page;
+            loadProducts(currentPage, categoryFilter.value);
+        }
+    }
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+    // Ensure these functions are globally accessible**
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+    function renderPagination() {
+        let pages = pagination.getPages();
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()">⬅</button>
+            ${pages.map(page => `<button onclick="gotoPage(${page})">${page}</button>`).join('')}
+            <button onclick="nextPage()">➡</button>
+        `;
+    }
+
+    // Infinite Scroll using IntersectionObserver
+    const observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {
+            console.log("Infinite Scroll Triggered! Loading next set...");
+
+            // 🔥 **Check karo ki search active hai ya nahi**
+            if (searchBox.value.length > 0) {
+                console.log("Search Active: Infinite Scroll Blocked!");
+                return; // Agar search active hai toh new data load mat karo
+            }
+
+            currentPage++;
+            loadProducts(currentPage, categoryFilter.value);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+
+    observer.observe(document.getElementById("scrollEnd"));
+
+    loadProducts();
+
+});
+
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+
+
+bhai, page hilight nahi ho raha hai aur 4th par aane ke baad bhi vaha dynamically 4 nahi dikh raha hai  
+ek problem aur hai... user agar page 2 par baar baar click kar raha toh page 2 ka content baar baar add hota ja raha hai
+
+
+
+
+thanks bhai, bahut mast chal raha hai...
+kya ye ho sakata hai ki jaise mai scroll down karake niche aata hoon toh number increasing order me hilight hote hai
+vaise he jab mai scroll up karake upar jau tab number decreasing order me hilight ho
+
+
+
+
+  bhai, ab next task ye hai ki 
+  jaise hee use add to wishlist par click kare ab button ka text change ho jaye remove to wishlist
+  cart me products: user browser close karake dobara open kare toh cart me product hone chahiye
+  wishlist me products: aur agar user browser close karake dobara open kare toh wishlist khali ho haye
+
+  reference ke liye:
+
+  cart.js
+  import API from './api.js';
+  document.addEventListener("DOMContentLoaded", async () => {
+      const api = new API('https://dummyjson.com');
+      //selecting the DOM element++
+      const cartContainer = document.getElementById("cartContainer");
+      //getting products from localstorage
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      //checking cart length
+      if (cart.length === 0) {
+          cartContainer.innerHTML = "<p>Cart is empty.</p>";
+          return;
+      }
+      //when all request are completed then only return the result
+      const cartItems = await Promise.all(cart.map(id => api.fetchProductById(id)));
+      //redering the Cart Details
+      cartContainer.innerHTML = cartItems.map(product => `
+          <div class="cart-item">
+              <img src="${product.thumbnail}" alt="${product.title}">
+              <h3>${product.title}</h3>
+              <p>₹${product.price}</p>
+              <button onclick="removeFromCart(${product.id})">Remove</button>
+          </div>
+      `).join('');
+      function removeFromCart(productId) {
+          let cart = JSON.parse(localStorage.getItem("cart")) || [];
+          //removing the product from the cart
+          cart = cart.filter(id => id !== productId);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          location.reload();
+      }
+      window.removeFromCart = removeFromCart;
+  });
+
+
+  wishlist.js
+  import API from './api.js';
+
+  document.addEventListener("DOMContentLoaded", async () => {
+      const api = new API('https://dummyjson.com');
+      //getting the wishlist container to show wishlist
+      const wishlistContainer = document.getElementById("wishlistContainer");
+      //fetching wishlist from localstorage
+      let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+      if (wishlist.length === 0) {
+          wishlistContainer.innerHTML = "<p>Wishlist is empty.</p>";
+          return;
+      }
+      //when all the request resolved then return the result.
+      const wishlistItems = await Promise.all(wishlist.map(id => api.fetchProductById(id)));
+      //adding wishlist products to wishlist container
+      wishlistContainer.innerHTML = wishlistItems.map(product => `
+          <div class="wishlist-item">
+              <img src="${product.thumbnail}" alt="${product.title}">
+              <h3>${product.title}</h3>
+              <p>₹${product.price}</p>
+              <button onclick="removeFromWishlist(${product.id})">Remove</button>
+          </div>
+      `).join('');
+
+      //logic to remove product from wishlist
+      function removeFromWishlist(productId) {
+          //fetching wishlist from localstorage
+          let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+          //removing element from local storage
+          wishlist = wishlist.filter(id => id !== productId);
+          //updating the wishlist element
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+          location.reload();
+      }
+      window.removeFromWishlist = removeFromWishlist;
+      
+  });
+
+  app.js
+  import Pagination from './pagination.js'
+  import API from './api.js';
+
+
+  document.addEventListener("DOMContentLoaded", async () => {
+      const api = new API('https://dummyjson.com');
+      const productContainer = document.getElementById("productContainer");
+      const searchBox = document.getElementById("searchBox");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const paginationContainer = document.getElementById("paginationContainer");
+
+      let currentPage = 1;
+      let pageSize = 20;
+      let totalProducts = 100;
+      let isFetching = false;
+      let allLoadedProducts = []; //Store all fetched data
+      let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+      let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+      async function loadProducts(page = 1, category = "") {
+          if (isFetching) return;
+          isFetching = true;
+
+          let skip = (page - 1) * pageSize;
+          let response = category ?
+              await api.fetchProductsByCategory(category, pageSize, skip) :
+              await api.fetchAllProducts(pageSize, skip);
+
+          totalProducts = response.total || 100;
+          pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+          pagination.setPage(page);  //  Ensure pagination state update ho
+
+          if (page === 1) {
+              allLoadedProducts = response.products; //  First load: Replace all data
+              productContainer.innerHTML = "";
+          } else {
+              allLoadedProducts.push(...response.products); //  Append new products
+          }
+
+          renderProducts(allLoadedProducts);
+          renderPagination();
+          isFetching = false;
+      }
+
+
+      function renderProducts(products, isSearch = false) {
+          console.log("Rendering products...");
+          if (products.length > 0) {
+              productContainer.innerHTML = products.map(product => `
+                  <div class="product-card">
+                      <img src="${product.thumbnail}" alt="${product.title}">
+                      <h3>${product.title}</h3>
+                      <p>₹${product.price}</p>
+                      <a href="product.html?id=${product.id}" style="display: inline-block; margin: 10px;">View Details</a></br>
+                      <button onclick="addToCart(${product.id})">Add to Cart</button>
+                      <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+                  </div>
+              `).join('');
+          } else {
+              productContainer.innerHTML = `
+                      <b> No Product Found! </b>
+                  `
+          }
+
+          // Observer ko temporarily disconnect karo jab search active ho
+          if (isSearch) {
+              observer.disconnect();
+              console.log("Observer DISABLED due to search");
+              return;  // Search mode me infinite scroll nahi chalega
+          }
+
+          let scrollEnd = document.getElementById("scrollEnd");
+          if (!scrollEnd) {
+              scrollEnd = document.createElement("div");
+              scrollEnd.id = "scrollEnd";
+              scrollEnd.style.height = "10px"; // Ensure it has height
+              productContainer.appendChild(scrollEnd);
+          } else {
+              productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+          }
+
+          //**Observer ko sirf tab re-attach karo jab search OFF ho**
+          observer.observe(scrollEnd);
+          console.log("Observer RE-ENABLED");
+      }
+
+      function debounce(func, delay) {
+          let timer;
+          return function (...args) {
+              clearTimeout(timer);
+              timer = setTimeout(() => func(...args), delay);
+          };
+      }
+
+      function applySearch(query) {
+          let filteredProducts = allLoadedProducts.filter(product =>
+              product.title.toLowerCase().includes(query.toLowerCase())
+          );
+
+          renderProducts(filteredProducts, query.length > 0);
+      }
+
+
+      const debounceSearch = debounce((query) => {
+          applySearch(query);
+      }, 500);
+
+      searchBox.addEventListener("input", () => {
+          debounceSearch(searchBox.value);
+      });
+
+      categoryFilter.addEventListener("change", () => {
+          loadProducts(1, categoryFilter.value);
+      });
+
+
+      function gotoPage(page) {
+          if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+              console.log("Goto Page Clicked:", page);
+              pagination.setPage(page);  //  Pagination object update karega
+              currentPage = page;  //  Global `currentPage` update
+              loadProducts(currentPage, categoryFilter.value);
+              renderPagination(); //  Update pagination UI
+          }
+      }
+
+
+      function prevPage() {
+          console.log("Previous Button Clicked");
+          gotoPage(pagination.prevPage());
+      }
+
+      function nextPage() {
+          console.log("Next Button Clicked");
+          gotoPage(pagination.nextPage());
+      }
+
+
+      window.gotoPage = gotoPage;
+      window.prevPage = prevPage;
+      window.nextPage = nextPage;
+
+
+      function renderPagination() {
+          let pages = pagination.getPages(); // 
+
+          console.log("Rendering Pagination... Pages:", pages);
+
+          paginationContainer.innerHTML = `
+              <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅</button>
+              ${pages.map(page =>
+              page === "..." ? `<span>...</span>` :
+                  `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+          ).join('')}
+              <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>➡</button>
+          `;
+      }
+
+      let lastScrollTop = 0;
+      const observer = new IntersectionObserver(entries => {
+          let currentScrollTop = productContainer.scrollTop;
+          console.log(`Current Scroll Top: ${currentScrollTop}, Last Scroll Top: ${lastScrollTop}`);
+          if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {
+              console.log("🔄 Infinite Scroll Triggered!");
+
+              if (searchBox.value.length > 0) {
+                  console.log("🚫 Search Active: Infinite Scroll Blocked!");
+                  return;
+              }
+              if (currentScrollTop > lastScrollTop) {
+                  console.log("⬇ Scrolling Down");
+                  if (currentPage < pagination.totalPages) {
+                      currentPage++;
+                  }
+              } else {
+                  console.log("⬆ Scrolling Up");
+                  if (currentPage > 1) {
+                      currentPage--; 
+                  }
+              }
+              console.log(`🔥 Updated Current Page: ${currentPage}`);
+              lastScrollTop = currentScrollTop;
+              loadProducts(currentPage, categoryFilter.value);
+              renderPagination();
+          }
+      }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+      observer.observe(document.getElementById("scrollEnd"));
+      loadProducts();
+      
+      
+      
+  });
+bhai, mai categories ko dynamic show karana chahata hoon... by default All category ka bhi option rakhana chahata hoon
+dekho kaha error aa raha hai...
+
+<select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+//fetching all categories
+    async function getAllCategories(){
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf",response);
+        categoryFilter.innerHTML = response.map((cat)=>
+            `<option value="${cat?.slug}">${cat?.value}</option>`
+        ).join('')
+    }
+    getAllCategories();
+
+
+
+bhai, mujhe pagination me offset lagana hai, jisase user apane according number of page select kara sake
+offset ke according total number of pages change bhi ho jaye
+
+bhai requirement ko achchhe se samajho
+ek drop down lagana hai, jisame of number of page 10, 20, 50, 100
+number of pages bhi usi ke according change ho jaye
+usi ke according data aaye, baaki functionality as it chale
+mujhe poora code mat dena bhai bas ye bata do kya kya aur kaha add kar rahe ho
+
+pagination.js
+// export default class Pagination {
+//     constructor(totalPages) {
+//         this.totalPages = totalPages;
+//         this.currentPage = 1;
+//     }
+
+//     setCurrentPage(page) {
+//         this.currentPage = page;
+//     }
+
+//     nextPage() {
+//         if (this.currentPage < this.totalPages) {
+//             this.currentPage++;
+//         }
+//         return this.currentPage;
+//     }
+
+//     prevPage() {
+//         if (this.currentPage > 1) {
+//             this.currentPage--;
+//         }
+//         return this.currentPage;
+//     }
+
+//     getPages() {
+//         let pages = [];
+//         if (this.totalPages <= 7) {
+//             pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+//         } else {
+//             if (this.currentPage <= 3) {
+//                 pages = [1, 2, 3, "...", this.totalPages - 1, this.totalPages];
+//             } else if (this.currentPage >= this.totalPages - 2) {
+//                 pages = [1, 2, "...", this.totalPages - 2, this.totalPages - 1, this.totalPages];
+//             } else {
+//                 pages = [1, "...", this.currentPage - 1, this.currentPage, this.currentPage + 1, "...", this.totalPages];
+//             }
+//         }
+//         return pages;
+//     }
+// }
+
+export default class Pagination {
+    constructor(totalPages) {
+        this.totalPages = totalPages;
+        this.currentPage = 1;
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+        }
+        console.log("Next Page Selected:", this.currentPage);
+        return this.currentPage;
+    }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+        }
+        console.log("Previous Page Selected:", this.currentPage);
+        return this.currentPage;
+    }
+
+    setPage(page) {
+        this.currentPage = page;
+    }
+
+    getPages() {
+        console.log("Current Page:", this.currentPage, "Total Pages:", this.totalPages);
+        let pages = [1]; //  First page hamesha dikhana hai
+
+        if (this.totalPages <= 7) {
+            for (let i = 2; i <= this.totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            let left = Math.max(2, this.currentPage - 2);
+            let right = Math.min(this.totalPages - 1, this.currentPage + 2);
+
+            console.log("Left Bound:", left, "Right Bound:", right);
+
+            if (left > 2) {
+                pages.push("...");
+                console.log("Adding '...' at Left");
+            }
+
+            for (let i = left; i <= right; i++) {
+                pages.push(i);
+            }
+
+            if (right < this.totalPages - 1) {
+                pages.push("...");
+                console.log("Adding '...' at Right");
+            }
+
+            pages.push(this.totalPages);
+        }
+
+        console.log("Pages Generated:", pages);
+        return pages;
+    }
+}
+
+app.js
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    const productContainer = document.getElementById("productContainer");
+    const searchBox = document.getElementById("searchBox");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+
+    //fetching all categories
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    let isFetching = false;
+    let allLoadedProducts = []; //Store all fetched data
+    let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    async function loadProducts(page = 1, category = "") {
+        if (isFetching) return;
+        isFetching = true;
+
+        let skip = (page - 1) * pageSize;
+        if (category) {
+            searchBox.value = "";
+        }
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+
+        //remove duplicacy
+        // let newProducts = response.products.filter(product => {
+        //     if (loadedProductIds.has(product.id)) {
+        //         return false;
+        //     }
+        //     loadedProductIds.add(product.id); //Add new product ID to Set
+        //     return true;
+        // });
+
+        // if (page === 1) {
+        //     allLoadedProducts = newProducts;  //First load: Replace all products
+        //     productContainer.innerHTML = "";
+        // } else {
+        //     allLoadedProducts.push(...newProducts); //Append unique products only
+        // }
+
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            productContainer.innerHTML = products.map(product => `
+                <div class="product-card">
+                <img src="${product.thumbnail}" alt="${product.title}">
+                <h3>${product.title}</h3>
+                <p>₹${product.price}</p>
+                <button onclick="toggleCart(${product.id})">
+                    ${cart.includes(product.id) ? "Remove from Cart" : "Add to Cart"}
+                </button>
+                <button onclick="toggleWishlist(${product.id})">
+                    ${wishlist.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+            </div>
+            `).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "10px"; // Ensure it has height
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+
+        //**Observer ko sirf tab re-attach karo jab search OFF ho**
+        observer.observe(scrollEnd);
+        console.log("Observer RE-ENABLED");
+    }
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+
+    categoryFilter.addEventListener("change", () => {
+        loadProducts(1, categoryFilter.value);
+    });
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            console.log("Goto Page Clicked:", page);
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+    }
+
+
+    function prevPage() {
+        console.log("Previous Button Clicked");
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        console.log("Next Button Clicked");
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+
+        console.log("Rendering Pagination... Pages:", pages);
+
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅</button>
+            ${pages.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>➡</button>
+        `;
+    }
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        let currentScrollTop = productContainer.scrollTop;
+        console.log(`Current Scroll Top: ${currentScrollTop}, Last Scroll Top: ${lastScrollTop}`);
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {
+            console.log("🔄 Infinite Scroll Triggered!");
+
+            if (searchBox.value.length > 0) {
+                console.log("🚫 Search Active: Infinite Scroll Blocked!");
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                console.log("⬇ Scrolling Down");
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                console.log("⬆ Scrolling Up");
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            console.log(`🔥 Updated Current Page: ${currentPage}`);
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+
+
+
+
+
+bhai, jaise es code me scroll down hone par page number change ho ja raha hai increasing order me, vaise mai chahata hoon ki scroll up hone par bhi page number decreasing order me change hota rahe... kya logic lagaoge... pahale logic samajhao fir code dena
+
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena
+reference ke liye app.js
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //listing of products:1
+    const productContainer = document.getElementById("productContainer");
+    //search functionality:1
+    const searchBox = document.getElementById("searchBox");
+    //listing of categories:1
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const pageSizeSelect = document.getElementById("pageSize");
+    //fetching all categories : listing of categories:2
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    //infiniteScrolling:1
+    let isFetching = false;
+    //searching:0
+    let allLoadedProducts = []; //Store all fetched data
+    // let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let cache = {};  // Cache object to store API responses
+    //add to cart and wishlit:0
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    pageSizeSelect.addEventListener("change", () => {
+        pageSize = parseInt(pageSizeSelect.value);  // Get new page size
+        //caching:0
+        cache = {}; // Clear cache when page size changes
+        let totalPages = Math.ceil(totalProducts / pageSize); // Recalculate total pages
+        pagination = new Pagination(totalPages);  // Reset pagination object
+        currentPage = 1;  // Reset to first page
+        loadProducts(currentPage, categoryFilter.value);  // Reload products
+        renderPagination();  // Update pagination UI
+    });
+
+    async function loadProducts(page = 1, category = "") {
+        //caching:1
+        let cacheKey = `${page}_${category}_${pageSize}`;
+        console.log("asfsfdsfsdf__adfd", cacheKey);
+        if (cache[cacheKey]) {
+            console.log("asdfsddfdsadfdf___asdfd", cache[cacheKey]);
+            console.log("Using cached data for:", cacheKey);
+            renderProducts(cache[cacheKey]);
+            renderPagination();
+            observer.disconnect();
+            return;
+        }
+        if (isFetching) return;
+        isFetching = true;
+
+        let skip = (page - 1) * pageSize;
+        if (category) {
+            searchBox.value = "";
+        }
+        //listing of product:2
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        console.log("asdfsdfsdfdsf__asdfsd", pageSize);
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            //searching:01
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+
+        //remove duplicacy
+        // let newProducts = response.products.filter(product => {
+        //     if (loadedProductIds.has(product.id)) {
+        //         return false;
+        //     }
+        //     loadedProductIds.add(product.id); //Add new product ID to Set
+        //     return true;
+        // });
+
+        // if (page === 1) {
+        //     allLoadedProducts = newProducts;  //First load: Replace all products
+        //     productContainer.innerHTML = "";
+        // } else {
+        //     allLoadedProducts.push(...newProducts); //Append unique products only
+        // }
+        //caching:3
+        cache[cacheKey] = response.products; // Store response in cache
+        //listing of Product:4
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+    //listing of product:4
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            productContainer.innerHTML = products.map(product => `
+                <div class="product-card">
+                <img src="${product.thumbnail}" alt="${product.title}">
+                <h3>${product.title}</h3>
+                <p>₹${product.price}</p>
+                <button onclick="toggleCart(${product.id})">
+                    ${cart.includes(product.id) ? "Remove from Cart" : "Add to Cart"}
+                </button>
+                <button onclick="toggleWishlist(${product.id})">
+                    ${wishlist.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+            </div>
+            `).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "10px"; // Ensure it has height
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        observer.observe(scrollEnd);//observer triggered if it view scrollEnd in viewport
+    }
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+    //add to cart
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //add to wish list
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //seaching functionlity
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    //searching functionlity:2
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+    //searching functionlity:3
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+    //searching functionlity:4
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+    //category functionaly
+    categoryFilter.addEventListener("change", () => {
+        //caching: 4
+        cache = {}; // Reset cache when category changes
+        loadProducts(1, categoryFilter.value);
+    });
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅</button>
+            ${pages.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>➡</button>
+        `;
+    }
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+
+bhai, search aur category ko badhiya sa css se design kar do
+reference ke liye
+<div class="search-filter">
+            <input type="text" placeholder="Search products..." id="searchBox">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+        </div>
+
+bhai, ye css pahale se lagi hai, tumhe cart aur wishlist icon ki design karani hai achchhe se
+bhai, keval css ki file diya karo
+
+.icon-container {
+    position: relative;
+    display: inline-block;
+    margin: 0 15px;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 3px 7px;
+    display: none;
+     /* Hide when count is 0 */
+}
+
+<div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+
+
+bhai, es bade wale container ki desing karo badiya... abhi ka code mai de raha hoon
+html
+    <!-- Product Container -->
+    <div class="product-container" id="productContainer">
+
+        <div id="scrollEnd"></div>
+    </div>
+css
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    border: 2px solid black;
+    margin:10px;
+    height: 66vh;
+    overflow:auto;
+    overflow-x: hidden;
+    
+}
+
+bhai, ab product card ki styling karani hai, usake button ki styling karani hai
+ek aur button view Details ka lagana hai.jis par click karane se product detail page open ho jaye
+cart dynamic create ho raha hai.
+
+app.js
+if (products.length > 0) {
+            productContainer.innerHTML = products.map(product => `
+                <div class="product-card">
+                <img src="${product.thumbnail}" alt="${product.title}">
+                <h3>${product.title}</h3>
+                <p>₹${product.price}</p>
+                <button onclick="toggleCart(${product.id})">
+                    ${cart.includes(product.id) ? "Remove from Cart" : "Add to Cart"}
+                </button>
+                <button onclick="toggleWishlist(${product.id})">
+                    ${wishlist.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+            </div>
+            `).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+
+        window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+
+    
+     //API for fetch product details by ID 
+    async fetchProductById(id) {
+        const response = await fetch(`${this.baseURL}/products/${id}`);
+        return response.json();
+    }
+
+
+bhai, zara es loading ko styling do.
+<div id="scrollEnd">
+            Loading More...
+        </div>
+
+bhai, ab pagination ki designing karate hai
+1. Page per products left me ho aur Pagination right me ho
+2. --> ki jagah badhiya sa next ka button bana do
+3. <-- ki jagah badhiya sa prev ka button bana do
+4. pageNumber wale button ki badhiya se designing kar do.
+
+reference ke liye:
+<!-- Pagination -->
+     <div class="pagination-container">
+        <div>
+            <label for="pageSize">Products per Page:</label>
+            <select id="pageSize">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+
+         <div class="pagination" id="paginationContainer">
+             <!-- Scroll End Detector -->
+         </div>
+     </div>
+
+
+function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅</button>
+            ${pages.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>➡</button>
+        `;
+    }
+
+bhai, mai ye chahata hoon ki jaise hee intersection observer trigger ho vaise hee
+product container thoda sa scroll down ho jaye so that user ko pata chal jaye ki naya product load ho gaya hai.
+
+reference ke liye
+let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+bhai, mai chahata hoon ki button par hover karane par <a> ka background change ho jaye aur color white ho jaye
+referenc ke liye
+/* View Details Button */
+.product-card .view-details {
+    border: 1px solid  var(--btn3);
+    background: white;
+}
+.product-card .view-details a{
+    background: white;
+    color: var(--btn3);
+    text-decoration: none;
+}
+
+.product-card .view-details:hover {
+    background: var(--btn3);
+}
+
+.product-card .view-details a:hover{
+    background: var(--btn3);
+    color: white;
+}
+<button class="view-details"><a href="product.html?id=${product.id}">View Details</a></button>
+
+
+
+bhai, mai tumhe products ki saari details de raha hoon, tumh badhiya sa product detais page banao styling ke sath
+
+product's Data:
+
+{id: 1, title: 'Essence Mascara Lash Princess', description: 'The Essence Mascara Lash Princess is a popular mas… with this long-lasting and cruelty-free formula.', category: 'beauty', price: 9.99, …}
+availabilityStatus
+: 
+"Low Stock"
+brand
+: 
+"Essence"
+category
+: 
+"beauty"
+description
+: 
+"The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula."
+dimensions
+: 
+depth
+: 
+28.01
+height
+: 
+14.43
+width
+: 
+23.17
+[[Prototype]]
+: 
+Object
+discountPercentage
+: 
+7.17
+id
+: 
+1
+images
+: 
+Array(1)
+0
+: 
+"https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png"
+length
+: 
+1
+[[Prototype]]
+: 
+Array(0)
+meta
+: 
+barcode
+: 
+"9164035109868"
+createdAt
+: 
+"2024-05-23T08:56:21.618Z"
+qrCode
+: 
+"https://assets.dummyjson.com/public/qr-code.png"
+updatedAt
+: 
+"2024-05-23T08:56:21.618Z"
+[[Prototype]]
+: 
+Object
+minimumOrderQuantity
+: 
+24
+price
+: 
+9.99
+rating
+: 
+4.94
+returnPolicy
+: 
+"30 days return policy"
+reviews
+: 
+Array(3)
+0
+: 
+comment
+: 
+"Very unhappy with my purchase!"
+date
+: 
+"2024-05-23T08:56:21.618Z"
+rating
+: 
+2
+reviewerEmail
+: 
+"john.doe@x.dummyjson.com"
+reviewerName
+: 
+"John Doe"
+[[Prototype]]
+: 
+Object
+1
+: 
+comment
+: 
+"Not as described!"
+date
+: 
+"2024-05-23T08:56:21.618Z"
+rating
+: 
+2
+reviewerEmail
+: 
+"nolan.gonzalez@x.dummyjson.com"
+reviewerName
+: 
+"Nolan Gonzalez"
+[[Prototype]]
+: 
+Object
+2
+: 
+comment
+: 
+"Very satisfied!"
+date
+: 
+"2024-05-23T08:56:21.618Z"
+rating
+: 
+5
+reviewerEmail
+: 
+"scarlett.wright@x.dummyjson.com"
+reviewerName
+: 
+"Scarlett Wright"
+[[Prototype]]
+: 
+Object
+length
+: 
+3
+[[Prototype]]
+: 
+Array(0)
+shippingInformation
+: 
+"Ships in 1 month"
+sku
+: 
+"RCH45Q1A"
+stock
+: 
+5
+tags
+: 
+Array(2)
+0
+: 
+"beauty"
+1
+: 
+"mascara"
+length
+: 
+2
+[[Prototype]]
+: 
+Array(0)
+thumbnail
+: 
+"https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/thumbnail.png"
+title
+: 
+"Essence Mascara Lash Princess"
+warrantyInformation
+: 
+"1 month warranty"
+weight
+: 
+2
+[[Prototype]]
+: 
+Object
+
+
+product detail page html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <!-- <div class="search-filter">
+            <input type="text" placeholder="Search products..." id="searchBox">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+        </div> -->
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav> 
+
+    
+    <!-- adding product details -->
+    <div class="product-details" id="productDetails"></div>
+
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/product.js"></script>
+</body>
+</html>
+
+
+bhai, alag se css file bana dena for product details page aur ek buy now ka bhi button add kar dena
+
+
+bhai, achchhe se suno 
+dynamic page banana data aa raha hai, tumhe bas alag se css likhani hai products detail ke liye aur kisi ke liye nahi
+
+<div class="product-details" id="productDetails"></div>
+product.js
+
+import API from './api.js';
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //fetching query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    //getting ID of that product
+    const productId = urlParams.get("id");
+    //accessing the productDetails Element
+    const productDetails = document.getElementById("productDetails");
+
+    if (productId) {
+        //fetching product using that ID
+        const product = await api.fetchProductById(productId);
+        //populating product details
+        productDetails.innerHTML = `
+            <h1>${product?.title}</h1>
+            <img src="${product?.thumbnail}" alt="${product?.title}">
+            <p>${product?.description}</p> 
+            <p>Price: ₹${product?.price}</p>
+            `;
+        // <button onclick="addToCart(${product.id})">Add to Cart</button>
+        // <button onclick="addToWishlist(${product.id})">Add to Wishlist</button>
+    }
+    //logic to add product into cart and whishlist
+    function addToCart(productId) {
+        //fetching all product's ID from Cart
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        //avoiding duplicate enty
+        if (!cart.includes(productId)) {
+            cart.push(productId);
+        }
+        //updating cart
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function addToWishlist(productId) {
+        //fetching all product's ID from wishlist
+        let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        //avoiding duplicate entry
+        if (!wishlist.includes(productId)) {
+            wishlist.push(productId);
+        }
+        //updating cart
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    }
+    window.addToCart = addToCart;
+    window.addToWishlist = addToWishlist;
+});
+
+
+
+bhai, mujhe ekdum smooth scroll chahiye, vo bhi thoda sa
+given function jaldi se scroll kar de raha hai...
+//Scroll Down Smoothly when New Products Load
+            setTimeout(() => {
+                let scrollAmount = document.querySelector(".product-card")?.clientHeight || 300;
+                productContainer.scrollBy({ top: scrollAmount, behavior: "smooth" });
+            }, 1000);
+
+
+
+bhai, meri requirement ye hai ki jaise user 2 page par click kare toh container scroll hoke vaha pahuch jaye
+logic batao ki kya karoge aur kaise implement karoge... kaha kaha mujhe changes karane hai
+reference ke liye app.js
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //listing of products:1
+    const productContainer = document.getElementById("productContainer");
+    //search functionality:1
+    const searchBox = document.getElementById("searchBox");
+    //listing of categories:1
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const pageSizeSelect = document.getElementById("pageSize");
+    //fetching all categories : listing of categories:2
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response?.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    //infiniteScrolling:1
+    let isFetching = false;
+    //searching:0
+    let allLoadedProducts = []; //Store all fetched data
+    // let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let cache = {};  // Cache object to store API responses
+    //add to cart and wishlit:0
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    pageSizeSelect.addEventListener("change", () => {
+        pageSize = parseInt(pageSizeSelect.value);  // Get new page size
+        //caching:0
+        cache = {}; // Clear cache when page size changes
+        let totalPages = Math.ceil(totalProducts / pageSize); // Recalculate total pages
+        pagination = new Pagination(totalPages);  // Reset pagination object
+        currentPage = 1;  // Reset to first page
+        loadProducts(currentPage, categoryFilter.value);  // Reload products
+        renderPagination();  // Update pagination UI
+    });
+
+    async function loadProducts(page = 1, category = "") {
+        //caching:1
+        let cacheKey = `${page}_${category}_${pageSize}`;
+        console.log("asfsfdsfsdf__adfd", cacheKey);
+        if (cache[cacheKey]) {
+            console.log("asdfsddfdsadfdf___asdfd", cache[cacheKey]);
+            console.log("Using cached data for:", cacheKey);
+            renderProducts(cache[cacheKey]);
+            renderPagination();
+            observer.disconnect();
+            return;
+        }
+        if (isFetching) return;
+        isFetching = true;
+
+        let skip = (page - 1) * pageSize;
+        if (category) {
+            searchBox.value = "";
+        }
+        //listing of product:2
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        console.log("asdfsdfsdfdsf__asdfsd", pageSize);
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            //searching:01
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+
+        //remove duplicacy
+        // let newProducts = response.products.filter(product => {
+        //     if (loadedProductIds.has(product.id)) {
+        //         return false;
+        //     }
+        //     loadedProductIds.add(product.id); //Add new product ID to Set
+        //     return true;
+        // });
+
+        // if (page === 1) {
+        //     allLoadedProducts = newProducts;  //First load: Replace all products
+        //     productContainer.innerHTML = "";
+        // } else {
+        //     allLoadedProducts.push(...newProducts); //Append unique products only
+        // }
+        //caching:3
+        cache[cacheKey] = response.products; // Store response in cache
+        //listing of Product:4
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+    //listing of product:4
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            console.log("asfasdfasdfasdf____asdfsadf", products[0]);
+            productContainer.innerHTML = products?.map(product =>
+                `
+        <div class="product-card">
+        <img src="${product?.thumbnail}" alt="${product.title}">
+        <h3>${product?.title}</h3>
+        <p>₹${product?.price}</p>
+        <button onclick="toggleCart(${product?.id})">
+            ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+        </button>
+        <button onclick="toggleWishlist(${product?.id})">
+            ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
+        <a href="product.html?id=${product?.id}" class="view-details">View Details</a>
+    </div>
+`
+            ).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "20px"; // Ensure it has height
+            scrollEnd.textContent = "Loading More..."
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        observer.observe(scrollEnd);//observer triggered if it view scrollEnd in viewport
+    }
+ 
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+    //add to cart
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //add to wish list
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //seaching functionlity
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    //searching functionlity:2
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+    //searching functionlity:3
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+    //searching functionlity:4
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+    //category functionaly
+    categoryFilter.addEventListener("change", () => {
+        //caching: 4
+        cache = {}; // Reset cache when category changes
+        loadProducts(1, categoryFilter.value);
+    });
+
+    //Scrolling Effects
+    function smoothScroll(){
+        let scrollAmount = 200;
+        let currentScroll = 0;
+        let step = 5; // Jitna chhota step hoga, utna smooth lagega
+    
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10); // Ye 10ms delay scroll ko dheere karega
+    }
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+    
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll, 1000);            
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+bhai, maine dono option try kar liya but page number 2 click karane par scrooll hee nahi hua
+
+
+bhai, es fucntion se scroll ho raha hai, logic ye lagani ki ham sahi se calculate kare kitana scroll karana hai on the basis of pageSize, Product Card length aur other parameters
+function smoothScrollOnClick(){
+        let scrollAmount = 200;
+        let currentScroll = 0;
+        let step = 5; // Jitna chhota step hoga, utna smooth lagega
+    
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10); // Ye 10ms delay scroll ko dheere karega
+    }
+
+bhai, tumhe scrollamount calculate karane se pahale ye bhi dekhana hai, ki product container ke ek row me kitane product-card hai
+
+bhai, mai chahata hoon ki jab products cache se load ho tab scrollend wala loader na dikhe
+reference ke liye
+if (cache[cacheKey]) {
+            renderProducts(cache[cacheKey]);
+            renderPagination();
+            observer.disconnect();
+            document.getElementById("scrollEnd").style.display = '';
+            return;
+        }
+
+bhai, kya esa ho sakata hai ki jab cache se data load ho, jo ham log button click par scroll kara rahe the use band kar de
+bhai, kya esa ho sakate hai ki jab cache se load ho toh initially scroll hamesha top par ho
+
+
+bhai, ye jo scrollEnd wala loader hai, ye data load hone ke baad bhi dikh raha hai,
+mai chahata hoon jab data load ho jaye tab vo na dikhe.
+
+bhai, poora code dekho
+agar ham hide kar denge ko observer scroll ko kaise observer karege aur naye page load kaise hoga... bas mai ye chahata hoon ki jab saara data load ho jaye tohnloder band ho jaye
+
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //listing of products:1
+    const productContainer = document.getElementById("productContainer");
+    //search functionality:1
+    const searchBox = document.getElementById("searchBox");
+    //listing of categories:1
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const pageSizeSelect = document.getElementById("pageSize");
+    //fetching all categories : listing of categories:2
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response?.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    //infiniteScrolling:1
+    let isFetching = false;
+    //searching:0
+    let allLoadedProducts = []; //Store all fetched data
+    // let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let cache = {};  // Cache object to store API responses
+    //add to cart and wishlit:0
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    pageSizeSelect.addEventListener("change", () => {
+        pageSize = parseInt(pageSizeSelect.value);  // Get new page size
+        //caching:0
+        cache = {}; // Clear cache when page size changes
+        let totalPages = Math.ceil(totalProducts / pageSize); // Recalculate total pages
+        pagination = new Pagination(totalPages);  // Reset pagination object
+        currentPage = 1;  // Reset to first page
+        loadProducts(currentPage, categoryFilter.value);  // Reload products
+        renderPagination();  // Update pagination UI
+    });
+
+    async function loadProducts(page = 1, category = "") {
+        //caching:1
+        let cacheKey = `${page}_${category}_${pageSize}`;
+        console.log("asfsfdsfsdf__adfd", cacheKey);
+        if (cache[cacheKey]) {
+            renderProducts(cache[cacheKey]);
+            renderPagination();
+            observer.disconnect();
+            document.getElementById("scrollEnd").style.display = 'none';
+            // Scroll function disable kar do
+            productContainer.scrollTop = 0;
+            window.disableScroll = true;
+            return;
+        }else{
+            window.disableScroll = false;
+        }
+        if (isFetching) return;
+        isFetching = true;
+        document.getElementById("scrollEnd").style.display = 'block'; 
+        let skip = (page - 1) * pageSize;
+        if (category) {
+            searchBox.value = "";
+        }
+        //listing of product:2
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+        
+        totalProducts = response.total || 100;
+        console.log("asdfsdfsdfdsf__asdfsd", pageSize);
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            //searching:01
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+        //caching:3
+        cache[cacheKey] = response.products; // Store response in cache
+        //listing of Product:4
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+    }
+
+    //listing of product:4
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            console.log("asfasdfasdfasdf____asdfsadf", products[0]);
+            productContainer.innerHTML = products?.map(product =>
+                `
+        <div class="product-card">
+        <img src="${product?.thumbnail}" alt="${product.title}">
+        <h3>${product?.title}</h3>
+        <p>₹${product?.price}</p>
+        <button onclick="toggleCart(${product?.id})">
+            ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+        </button>
+        <button onclick="toggleWishlist(${product?.id})">
+            ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
+        <a href="product.html?id=${product?.id}" class="view-details">View Details</a>
+    </div>
+`
+            ).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "20px"; // Ensure it has height
+            scrollEnd.textContent = "Loading More..."
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        observer.observe(scrollEnd);//observer triggered if it view scrollEnd in viewport
+    }
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+    //add to cart
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //add to wish list
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //seaching functionlity
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    //searching functionlity:2
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+    //searching functionlity:3
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+    //searching functionlity:4
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+    //category functionaly
+    categoryFilter.addEventListener("change", () => {
+        //caching: 4
+        cache = {}; // Reset cache when category changes
+        loadProducts(1, categoryFilter.value);
+    });
+
+    //Scrolling Effects
+    function smoothScroll() {
+        let scrollAmount = 200;
+        let currentScroll = 0;
+        let step = 5; // Jitna chhota step hoga, utna smooth lagega
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10); // Ye 10ms delay scroll ko dheere karega
+    }
+
+    function smoothScrollOnClick(pageSize) {
+        if (window.disableScroll) return;
+        let productContainer = document.querySelector(".product-container"); // Ensure correct container selector
+        let productCards = document.querySelectorAll(".product-card"); // Select all product cards
+
+        if (!productContainer || productCards.length === 0) return; // If elements not found, exit
+
+        let productCardHeight = productCards[0].offsetHeight; // Height of one product card
+        let containerWidth = productContainer.clientWidth; // Width of product container
+        let productCardWidth = productCards[0].offsetWidth; // Width of one product card
+
+        // Calculate number of product cards in one row
+        let cardsPerRow = Math.floor(containerWidth / productCardWidth);
+        if (cardsPerRow === 0) cardsPerRow = 1; // Safety check to avoid division by zero
+
+        // Calculate number of rows per page
+        let rowsPerPage = Math.ceil(pageSize / cardsPerRow);
+
+        // Final scroll amount
+        let scrollAmount = rowsPerPage * productCardHeight;
+
+        let currentScroll = 0;
+        let step = Math.ceil(scrollAmount / 50); // Smaller steps for smooth scrolling
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10);
+    }
+
+
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+        // Scroll logic add karein
+        setTimeout(smoothScrollOnClick(pageSize), 1000); // Scroll animation
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll, 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+
+
+bhai, cart page ke mast wali design kar do toh
+
+
+bhai, mai es page me caching ka concept use karana chahata hoon, matlab agar cart se koi item hata doon toh caching se hee saara data load ho jaye instead of API call
+
+cart.js
+import API from './api.js';
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    const cartContainer = document.getElementById("cartContainer");
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+        console.log("adfasfdsdasdfdsf____asdsfasasdfadsf",cart.length);
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+
+    if (cart.length === 0) {
+        cartContainer.innerHTML = "<p>Cart is empty.</p>";
+        return;
+    }
+    
+    const cartItems = await Promise.all(cart?.map(id => api.fetchProductById(id)));
+    cartContainer.innerHTML = cartItems?.map(product => `
+        <div class="product-card">
+            <img src="${product?.thumbnail}" alt="${product?.title}">
+            <h3>${product?.title}</h3>
+            <h4>${product?.description}</h4>
+            <p>₹${product?.price}</p>
+            <button onclick="removeFromCart(${product?.id})">Remove From Cart</button>
+        </div>
+    `).join('');
+
+    window.removeFromCart = (productId) => {
+        cart = cart.filter(id => id !== productId);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        location.reload();
+    };
+    
+});
+
+bhai, abhi bhi ek baat nahi samajh aayi ki 
+keval 103 wali kaise fetch ho rahi
+👉 Example Execution:
+Cart में हमारे पास [101, 102, 103] थे, लेकिन cache में सिर्फ 101 और 102 थे।
+इसलिए API सिर्फ 103 को fetch करेगी।
+const cartItems = await Promise.all(cart.map(id => api.fetchProductById(id)));
+ye function saari ID par lagegi na
+
+
+bhai, rating ko check karo
+e.g. agar rating 2.3 se chhota ho to 2 star dikhao
+    agar rating 2.7 se bada hai to 3 start dikhat
+    agar 2.3 aur 2.7 ke bich hai toh 2 star aur ke 1/2 star dikhao
+
+reference le liye code
+<p class="rating">⭐ Rating: ${product?.rating}</p>
+
+
+bhai, es project object me `images` naam ka array aa raha hai, jisame images ke link pade hai
+mai chahata hoon ki 
+1. jitani images hai, thumbnail ke niche choti choti dikane lagega
+2. User jab kise niche ki image par click kare toh image toggle kare
+
+reference ke liye
+productDetails.innerHTML = `
+            <div class="product-container">
+                <div class="product-image">
+                    <img src="${product?.thumbnail}" alt="${product?.title}">
+                </div>
+                <div class="product-info">
+                    <h1>${product?.title}</h1>
+                    <p class="brand">Brand: <strong>${product?.brand}</strong></p>
+                    <p class="category">Category: <strong>${product?.category}</strong></p>
+                    <p class="description">${product?.description}</p>
+                    <p class="price">Price: ₹${product?.price} <span class="discount">(${product?.discountPercentage}% off)</span></p>
+                    <p class="availability ${product?.availabilityStatus === 'Low Stock' ? 'low-stock' : ''}">Status: ${product?.availabilityStatus}</p>
+                    <p class="stock">Stock: ${product?.stock} left</p>
+                    <p class="rating">Average Rating: ${getStars(product?.rating)}</p>
+                    <p class="shipping">🚚 Shipping: ${product?.shippingInformation}</p>
+                    <p class="warranty">🛠 Warranty: ${product?.warrantyInformation}</p>
+                    <p class="return-policy">🔄 Return Policy: ${product?.returnPolicy}</p>
+
+                    <div class="product-buttons">
+                        
+                        
+
+                        <button id="addToCart" class="add-to-cart" onclick="toggleCart(${product?.id})">
+            ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+        </button>
+        <button id="addToWishlist" class="add-to-wishlist" onclick="toggleWishlist(${product?.id})">
+            ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
+
+
+
+
+                        <button class="buy-now">Buy Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reviews-section">
+                <h2>Customer Reviews</h2>
+                <div class="reviews">
+                    ${product?.reviews.map(review => `
+                        <div class="review">
+                            <p><strong>${review.reviewerName}</strong>
+                             ${'⭐'.repeat(review.rating)}
+                             </p>
+                            <p class="review-comment">"${review.comment}"</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+
+        bhai, kah raha chageImage is not defined, jabaki maine function laga di hai
+
+        bhai, zara CSS thik karo, matlab image jab change ho raha poore div ko disturb kar de raha hai
+        .product-image {
+    text-align: center;
+    position: relative;
+}
+
+.product-image img {
+    width: 100%;
+    height: 70%;
+    object-fit:contain;
+}
+
+bhai, problem mai samajha gaya 
+jab image link me ' aa jata hai, toh toggle nahi ho raha
+but image line me ' nahi aata hai, toh proper image toggle nahi ho raha
+
+
+bhai, es project me keval do problem rah gayi hai
+jab user scroll down karata hai, toh page number change hota hai but jab user scroll up karata hai tab page number change nahi hota,
+e.g. jab user 10 pageNumber button par click karata hai, phir 9 par click kare toh page 10 ke baad 9 ka data load hota hai, aur page scroll down hokar 9 wal content dikhata hai.mai chahata hoon ki page 9 ka section tab tak khali rahe jab page 10 load hua ho, jab page 9 load ho jaye page 10 se scroll up hokar 9 tak jaye
+
+mai, chahata hoon ki section aur ID ka use karaek, each page ko section me load karo aur ye problem solve karo
+reference ke liye:
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCommerce - Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div>
+            <a class="logo-container" href="./index.html">
+                <img src="./images/eCommerce.png" alt="eCommerceImg">
+            </a>
+        </div>
+        <div class="search-filter">
+            <input type="text" placeholder="Search products..." id="searchBox">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="laptops">Laptops</option>
+                <option value="fragrances">Fragrances</option>
+            </select>
+        </div>
+        <div class="nav-links">
+            <a href="cart.html" class="icon-container">
+                🛒
+                <span id="cartCount" class="badge">0</span>
+            </a>
+            <a href="wishlist.html" class="icon-container">
+                ❤️
+                <span id="wishlistCount" class="badge">0</span>
+            </a>
+        </div>
+    </nav>
+    <!-- Product Container -->
+    <div class="product-container" id="productContainer">
+
+        <div id="scrollEnd">
+            Loading More...
+        </div>
+    </div>
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <div>
+            <label for="pageSize">Products per Page:</label>
+            <select id="pageSize">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+
+        <div class="pagination" id="paginationContainer">
+            <!-- Scroll End Detector -->
+        </div>
+    </div>
+    <script type="module" src="scripts/api.js"></script>
+    <script type="module" src="scripts/pagination.js"></script>
+    <script type="module" src="scripts/app.js"></script>
+    <script type="module" src="scripts/product.js"></script>
+
+</body>
+</html>
+app.js
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //listing of products:1
+    const productContainer = document.getElementById("productContainer");
+    //search functionality:1
+    const searchBox = document.getElementById("searchBox");
+    //listing of categories:1
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const pageSizeSelect = document.getElementById("pageSize");
+    //fetching all categories : listing of categories:2
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response?.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    //infiniteScrolling:1
+    let isFetching = false;
+    //searching:0
+    let allLoadedProducts = []; //Store all fetched data
+    // let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let cache = {};  // Cache object to store API responses
+    //add to cart and wishlit:0
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    pageSizeSelect.addEventListener("change", () => {
+        pageSize = parseInt(pageSizeSelect.value);  // Get new page size
+        //caching:0
+        cache = {}; // Clear cache when page size changes
+        let totalPages = Math.ceil(totalProducts / pageSize); // Recalculate total pages
+        pagination = new Pagination(totalPages);  // Reset pagination object
+        currentPage = 1;  // Reset to first page
+        loadProducts(currentPage, categoryFilter.value);  // Reload products
+        renderPagination();  // Update pagination UI
+    });
+    //Scrolling Effects
+    function smoothScroll(scrollAmount) {
+        let currentScroll = 0;
+        let step = 5; // Jitna chhota step hoga, utna smooth lagega
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10); // Ye 10ms delay scroll ko dheere karega
+    }
+    async function loadProducts(page = 1, category = "") {
+        //caching:1
+        let cacheKey = `${page}_${category}_${pageSize}`;
+        console.log("asfsfdsfsdf__adfd", cacheKey);
+        if (cache[cacheKey]) {
+            renderProducts(cache[cacheKey]);
+            setTimeout(smoothScroll(50), 1000);
+            renderPagination();
+            observer.disconnect();
+            document.getElementById("scrollEnd").style.display = 'none';
+            // Scroll function disable kar do
+            productContainer.scrollTop = 0;
+            window.disableScroll = true;
+            return;
+        }else{
+            window.disableScroll = false;
+        }
+        if (isFetching) return;
+        isFetching = true;
+        document.getElementById("scrollEnd").style.display = 'block'; 
+        let skip = (page - 1) * pageSize;
+        if (category) {
+            searchBox.value = "";
+        }
+        //listing of product:2
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+        
+        totalProducts = response.total || 100;
+        console.log("asdfsdfsdfdsf__asdfsd", pageSize);
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            //searching:01
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+        //caching:3
+        cache[cacheKey] = response.products; // Store response in cache
+        //listing of Product:4
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+        if (page >= pagination.totalPages) {
+            document.getElementById("scrollEnd").style.display = 'none';
+            observer.disconnect();
+        }
+    }
+ 
+    //listing of product:4
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            console.log("asfasdfasdfasdf____asdfsadf", products[0]);
+            productContainer.innerHTML = products?.map(product =>
+                `
+        <div class="product-card">
+        <img src="${product?.thumbnail}" alt="${product.title}">
+        <h3>${product?.title}</h3>
+        <p>₹${product?.price}</p>
+        <button onclick="toggleCart(${product?.id})">
+            ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+        </button>
+        <button onclick="toggleWishlist(${product?.id})">
+            ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
+        <a href="product.html?id=${product?.id}" class="view-details">View Details</a>
+    </div>
+`
+            ).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "20px"; // Ensure it has height
+            scrollEnd.textContent = "Loading More..."
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        observer.observe(scrollEnd);//observer triggered if it view scrollEnd in viewport
+    }
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+    //add to cart
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //add to wish list
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //seaching functionlity
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    //searching functionlity:2
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+    //searching functionlity:3
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+    //searching functionlity:4
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+    //category functionaly
+    categoryFilter.addEventListener("change", () => {
+        //caching: 4
+        cache = {}; // Reset cache when category changes
+        loadProducts(1, categoryFilter.value);
+    });
+
+    
+
+    function smoothScrollOnClick(pageSize) {
+        if (window.disableScroll) return;
+        let productContainer = document.querySelector(".product-container"); // Ensure correct container selector
+        let productCards = document.querySelectorAll(".product-card"); // Select all product cards
+
+        if (!productContainer || productCards.length === 0) return; // If elements not found, exit
+
+        let productCardHeight = productCards[0].offsetHeight; // Height of one product card
+        let containerWidth = productContainer.clientWidth; // Width of product container
+        let productCardWidth = productCards[0].offsetWidth; // Width of one product card
+
+        // Calculate number of product cards in one row
+        let cardsPerRow = Math.floor(containerWidth / productCardWidth);
+        if (cardsPerRow === 0) cardsPerRow = 1; // Safety check to avoid division by zero
+
+        // Calculate number of rows per page
+        let rowsPerPage = Math.ceil(pageSize / cardsPerRow);
+
+        // Final scroll amount
+        let scrollAmount = rowsPerPage * productCardHeight;
+
+        let currentScroll = 0;
+        let step = Math.ceil(scrollAmount / 50); // Smaller steps for smooth scrolling
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10);
+    }
+
+
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+        // Scroll logic add karein
+        setTimeout(smoothScrollOnClick(pageSize), 1000); // Scroll animation
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll(200), 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+bhai, mujhe step by step batao ki kya karu jisase bake fuctionality par koi effect na pade
+
+bhai, mai intersectionObserver ka code aur load product ka code de raha hoon tum batao ab kya kara hai
+requirement:
+jab user scroll down karata hai, toh page number change hota hai but jab user scroll up karata hai tab page number change nahi hota,
+e.g. jab user 10 pageNumber button par click karata hai, phir 9 par click kare toh page 10 ke baad 9 ka data load hota hai, aur page scroll down hokar 9 wal content dikhata hai.mai chahata hoon ki page 9 ka section tab tak khali rahe jab page 10 load hua ho, jab page 9 load ho jaye page 10 se scroll up hokar 9 tak jaye
+
+    function smoothScrollOnClick(pageSize) {
+        if (window.disableScroll) return;
+        let productContainer = document.querySelector(".product-container"); // Ensure correct container selector
+        let productCards = document.querySelectorAll(".product-card"); // Select all product cards
+
+        if (!productContainer || productCards.length === 0) return; // If elements not found, exit
+
+        let productCardHeight = productCards[0].offsetHeight; // Height of one product card
+        let containerWidth = productContainer.clientWidth; // Width of product container
+        let productCardWidth = productCards[0].offsetWidth; // Width of one product card
+
+        // Calculate number of product cards in one row
+        let cardsPerRow = Math.floor(containerWidth / productCardWidth);
+        if (cardsPerRow === 0) cardsPerRow = 1; // Safety check to avoid division by zero
+
+        // Calculate number of rows per page
+        let rowsPerPage = Math.ceil(pageSize / cardsPerRow);
+
+        // Final scroll amount
+        let scrollAmount = rowsPerPage * productCardHeight;
+
+        let currentScroll = 0;
+        let step = Math.ceil(scrollAmount / 50); // Smaller steps for smooth scrolling
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10);
+    }
+
+
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+        // Scroll logic add karein
+        setTimeout(smoothScrollOnClick(pageSize), 1000); // Scroll animation
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll(200), 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+
+bhai, scroll Up par page number change karane ka maine ye logic socha hai
+1. product Container scroll ke current postion pata karo ki abhi kaha par hai
+2. product container scroll postition ko track karate raho.
+3. jaise current position aur last postion me `scrollAmount` ka difference hota hai page number chage kar do
+4. jo pahale chal raha use change nahi karenge
+
+scrollAmount calculate ka logic
+let productContainer = document.querySelector(".product-container"); // Ensure correct container selector
+        let productCards = document.querySelectorAll(".product-card"); // Select all product cards
+
+        if (!productContainer || productCards.length === 0) return; // If elements not found, exit
+
+        let productCardHeight = productCards[0].offsetHeight; // Height of one product card
+        let containerWidth = productContainer.clientWidth; // Width of product container
+        let productCardWidth = productCards[0].offsetWidth; // Width of one product card
+
+        // Calculate number of product cards in one row
+        let cardsPerRow = Math.floor(containerWidth / productCardWidth);
+        if (cardsPerRow === 0) cardsPerRow = 1; // Safety check to avoid division by zero
+
+        // Calculate number of rows per page
+        let rowsPerPage = Math.ceil(pageSize / cardsPerRow);
+
+        // Final scroll amount
+        let scrollAmount = rowsPerPage * productCardHeight;
+
+intersection observer
+let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll(200), 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+
+    bhai, ye chal hee nahi r
+
+
+bhai, requirement samajho
+mujhe scroll up aur scroll down hone par page number change hota hua dikhana chahiye
+
+
+ek aur observer banao jo products ko observe karega by its id
+pagesize ke basis aur product id ki madad se scroll up aur down hone par page number ko change karake active kar do
+
+
+reference ke liye
+import Pagination from './pagination.js'
+import API from './api.js';
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = new API('https://dummyjson.com');
+    //listing of products:1
+    const productContainer = document.getElementById("productContainer");
+    //search functionality:1
+    const searchBox = document.getElementById("searchBox");
+    //listing of categories:1
+    const categoryFilter = document.getElementById("categoryFilter");
+    const paginationContainer = document.getElementById("paginationContainer");
+    const pageSizeSelect = document.getElementById("pageSize");
+    //fetching all categories : listing of categories:2
+    async function getAllCategories() {
+        let response = await api.getAllCategory();
+        console.log("asdfsdf____asdfasdf", response);
+        categoryFilter.innerHTML = `
+        <option value="">All Categories</option>
+        ${response?.map(cat => `<option value="${cat?.slug}">${cat?.name}</option>`).join('')}
+    `;
+    }
+    getAllCategories();
+
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalProducts = 100;
+    //infiniteScrolling:1
+    let isFetching = false;
+    //searching:0
+    let allLoadedProducts = []; //Store all fetched data
+    // let loadedProductIds = new Set(); // Already added product IDs track karne ke liye
+    let cache = {};  // Cache object to store API responses
+    //add to cart and wishlit:0
+    let cart = JSON.parse(localStorage.getItem("cart")) || []; //
+    let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || []; // 
+
+
+    let pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+
+    pageSizeSelect.addEventListener("change", () => {
+        pageSize = parseInt(pageSizeSelect.value);  // Get new page size
+        //caching:0
+        cache = {}; // Clear cache when page size changes
+        let totalPages = Math.ceil(totalProducts / pageSize); // Recalculate total pages
+        pagination = new Pagination(totalPages);  // Reset pagination object
+        currentPage = 1;  // Reset to first page
+        loadProducts(currentPage, categoryFilter.value);  // Reload products
+        renderPagination();  // Update pagination UI
+    });
+    //Scrolling Effects
+    function smoothScroll(scrollAmount) {
+        let currentScroll = 0;
+        let step = 5; // Jitna chhota step hoga, utna smooth lagega
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10); // Ye 10ms delay scroll ko dheere karega
+    }
+    async function loadProducts(page = 1, category = "") {
+        //caching:1
+        let cacheKey = `${page}_${category}_${pageSize}`;
+        console.log("asfsfdsfsdf__adfd", cacheKey);
+        if (cache[cacheKey]) {
+            renderProducts(cache[cacheKey]);
+            setTimeout(smoothScroll(50), 1000);
+            renderPagination();
+            observer.disconnect();
+            document.getElementById("scrollEnd").style.display = 'none';
+            // Scroll function disable kar do
+            productContainer.scrollTop = 0;
+            window.disableScroll = true;
+            return;
+        } else {
+            window.disableScroll = false;
+        }
+        if (isFetching) return;
+        isFetching = true;
+        document.getElementById("scrollEnd").style.display = 'block';
+        let skip = (page - 1) * pageSize;
+
+        if (category) {
+            searchBox.value = "";
+        }
+
+        //listing of product:2
+        let response = category ?
+            await api.fetchProductsByCategory(category, pageSize, skip) :
+            await api.fetchAllProducts(pageSize, skip);
+
+        totalProducts = response.total || 100;
+        console.log("asdfsdfsdfdsf__asdfsd", pageSize);
+        pagination = new Pagination(Math.ceil(totalProducts / pageSize));
+        pagination.setPage(page);  //  Ensure pagination state update ho
+
+        if (page === 1) {
+            //searching:01
+            allLoadedProducts = response.products; //  First load: Replace all data
+            productContainer.innerHTML = "";
+        } else {
+            allLoadedProducts.push(...response.products); //  Append new products
+        }
+        //caching:3
+        cache[cacheKey] = response.products; // Store response in cache
+        //listing of Product:4
+        renderProducts(allLoadedProducts);
+        renderPagination();
+        isFetching = false;
+        if (page >= pagination.totalPages) {
+            document.getElementById("scrollEnd").style.display = 'none';
+            observer.disconnect();
+        }
+    }
+
+    //listing of product:4
+    function renderProducts(products, isSearch = false) {
+        console.log("Rendering products...");
+        if (products.length > 0) {
+            console.log("asfasdfasdfasdf____asdfsadf", products[0]);
+            productContainer.innerHTML = products?.map(product =>
+                `
+        <div class="product-card">
+        <img src="${product?.thumbnail}" alt="${product.title}">
+        <h3>${product?.title}</h3>
+        <p>₹${product?.price}</p>
+        <button onclick="toggleCart(${product?.id})">
+            ${cart.includes(product?.id) ? "Remove from Cart" : "Add to Cart"}
+        </button>
+        <button onclick="toggleWishlist(${product?.id})">
+            ${wishlist.includes(product?.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
+        <a href="product.html?id=${product?.id}" class="view-details">View Details</a>
+    </div>
+`
+            ).join('');
+        } else {
+            productContainer.innerHTML = `
+                    <b> No Product Found! </b>
+                `
+        }
+        // Observer ko temporarily disconnect karo jab search active ho
+        if (isSearch) {
+            observer.disconnect();
+            console.log("Observer DISABLED due to search");
+            return;  // Search mode me infinite scroll nahi chalega
+        }
+
+        let scrollEnd = document.getElementById("scrollEnd");
+        if (!scrollEnd) {
+            scrollEnd = document.createElement("div");
+            scrollEnd.id = "scrollEnd";
+            scrollEnd.style.height = "20px"; // Ensure it has height
+            scrollEnd.textContent = "Loading More..."
+            productContainer.appendChild(scrollEnd);
+        } else {
+            productContainer.appendChild(scrollEnd); // Reposition `scrollEnd`
+        }
+        observer.observe(scrollEnd);//observer triggered if it view scrollEnd in viewport
+    }
+
+    //updating counter of cart and wishlist.
+    function updateCounters() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
+
+        let cartBadge = document.getElementById("cartCount");
+        let wishlistBadge = document.getElementById("wishlistCount");
+
+        cartBadge.textContent = cart.length;
+        wishlistBadge.textContent = wishlist.length;
+
+        // Badge hide/show logic
+        cartBadge.style.display = cart.length > 0 ? "block" : "none";
+        wishlistBadge.style.display = wishlist.length > 0 ? "block" : "none";
+    }
+    updateCounters();
+    //add to cart
+    window.toggleCart = (productId) => {
+        if (cart.includes(productId)) {
+            cart = cart.filter(id => id !== productId);
+        } else {
+            cart.push(productId);
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //add to wish list
+    window.toggleWishlist = (productId) => {
+        if (wishlist.includes(productId)) {
+            wishlist = wishlist.filter(id => id !== productId);
+        } else {
+            wishlist.push(productId);
+        }
+        sessionStorage.setItem("wishlist", JSON.stringify(wishlist)); //  Resets on browser close
+        renderProducts(allLoadedProducts);
+        updateCounters();
+    };
+    //seaching functionlity
+    function debounce(func, delay) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func(...args), delay);
+        };
+    }
+    //searching functionlity:2
+    function applySearch(query) {
+        let filteredProducts = allLoadedProducts.filter(product =>
+            product.title.toLowerCase().includes(query.toLowerCase())
+        );
+        renderProducts(filteredProducts, query.length > 0);
+    }
+
+    //searching functionlity:3
+    const debounceSearch = debounce((query) => {
+        applySearch(query);
+    }, 500);
+    //searching functionlity:4
+    searchBox.addEventListener("input", () => {
+        debounceSearch(searchBox.value);
+    });
+    //category functionaly
+    categoryFilter.addEventListener("change", () => {
+        //caching: 4
+        cache = {}; // Reset cache when category changes
+        loadProducts(1, categoryFilter.value);
+    });
+
+
+    function smoothScrollOnClick(pageSize) {
+        if (window.disableScroll) return;
+        let productContainer = document.querySelector(".product-container"); // Ensure correct container selector
+        let productCards = document.querySelectorAll(".product-card"); // Select all product cards
+
+        if (!productContainer || productCards.length === 0) return; // If elements not found, exit
+
+        let productCardHeight = productCards[0].offsetHeight; // Height of one product card
+        let containerWidth = productContainer.clientWidth; // Width of product container
+        let productCardWidth = productCards[0].offsetWidth; // Width of one product card
+
+        // Calculate number of product cards in one row
+        let cardsPerRow = Math.floor(containerWidth / productCardWidth);
+        if (cardsPerRow === 0) cardsPerRow = 1; // Safety check to avoid division by zero
+
+        // Calculate number of rows per page
+        let rowsPerPage = Math.ceil(pageSize / cardsPerRow);
+
+        // Final scroll amount
+        let scrollAmount = rowsPerPage * productCardHeight;
+        console.log("asffasddsf__asdfasdfasd", scrollAmount);
+        let currentScroll = 0;
+        let step = Math.ceil(scrollAmount / 50); // Smaller steps for smooth scrolling
+
+        let interval = setInterval(() => {
+            productContainer.scrollBy({ top: step, behavior: "instant" });
+            currentScroll += step;
+            if (currentScroll >= scrollAmount) {
+                clearInterval(interval);
+            }
+        }, 10);
+    }
+
+
+
+    function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+        // Scroll logic add karein
+        setTimeout(smoothScrollOnClick(pageSize), 1000); // Scroll animation
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll(200), 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+    loadProducts();
+
+
+});
+
+bhai, logic samajho
+suppose pagesize 20 hai
+toh observer 20,21,40,41,60,61.. and so on ids wale product to observe kare
+jaise scroll down karane par id 21,41,61 wala product observe hua next page active hoga
+
+
+
+
+
+
+Requirement: Scroll up and scroll down hone par page number update hona
+
+bhai, ek kaam karo jab bhi observer naya page load kar raha hai usase pahale 
+ek div rakhate jao with id == currentpage with common class
+
+ab ek naya observer banao jo es div ko observe karega
+jaise hee use div observe ho currentpage == id se update kar dega
+
+reference ke liye:
+function gotoPage(page) {
+        if (page !== "..." && currentPage !== page) {  //  Prevent duplicate loading
+            pagination.setPage(page);  //  Pagination object update karega
+            currentPage = page;  //  Global `currentPage` update
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination(); //  Update pagination UI
+        }
+        // Scroll logic add karein
+        setTimeout(smoothScrollOnClick(pageSize), 1000); // Scroll animation
+    }
+
+
+    function prevPage() {
+        gotoPage(pagination.prevPage());
+    }
+
+    function nextPage() {
+        gotoPage(pagination.nextPage());
+    }
+
+
+    window.gotoPage = gotoPage;
+    window.prevPage = prevPage;
+    window.nextPage = nextPage;
+
+
+    function renderPagination() {
+        let pages = pagination.getPages(); // 
+        paginationContainer.innerHTML = `
+            <button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>⬅Prev</button>
+            ${pages?.map(page =>
+            page === "..." ? `<span>...</span>` :
+                `<button onclick="gotoPage(${page})" ${page === currentPage ? "class='active'" : ""}>${page}</button>`
+        ).join('')}
+            <button onclick="nextPage()" ${currentPage === pagination.totalPages ? "disabled" : ""}>Next➡</button>
+        `;
+    }
+
+
+
+    let lastScrollTop = 0;
+    const observer = new IntersectionObserver(entries => {
+        console.log("dfdsadfds____asdfdsf", entries);
+        let currentScrollTop = productContainer.scrollTop;
+        if (entries[0].isIntersecting && !isFetching && currentPage < pagination.totalPages) {//checking div is visible or not, cheking that any api request already running or not and also checking unnecessary API calls
+            if (searchBox.value.length > 0) {
+                return;
+            }
+            if (currentScrollTop > lastScrollTop) {
+                if (currentPage < pagination.totalPages) {
+                    currentPage++;
+                }
+            } else {
+                if (currentPage > 1) {
+                    currentPage--;
+                }
+            }
+            lastScrollTop = currentScrollTop;
+            loadProducts(currentPage, categoryFilter.value);
+            renderPagination();
+            //Scroll Down Smoothly when New Products Load
+            setTimeout(smoothScroll(200), 1000);
+        }
+    }, { root: document.getElementById("productContainer"), rootMargin: "50px", threshold: 0.5 });
+
+    observer.observe(document.getElementById("scrollEnd"));
+bhai, dhyan rakahana mujhe code direct chat me chahiye with little explanation, editor me code mat dena

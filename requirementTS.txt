@@ -1,0 +1,312 @@
+bhai, ek nayi chat start karo jisame ham basic to Advance typescript sikhenge
+mai tumhe topics bataunga aur tum ekdum detail me usako explain karana
+har topics par ek do very basic question bhi karenge to clear understanding of concept and syntax
+Bhai, binlingual me samajhan aur hinglish ka use karana mere bhai
+
+
+
+
+bhai, mujhe double mehanat karana pad raha hai, mai chahata hoon ki direct .ts ka output print ho jaye
+pahale tsc index.ts se .ts se file ko .js me convert karate hai
+node index.js se js ko run karate hai
+aur jab mai direct .ts file ko run karata hoon tab ye error aa raha hai
+ts-node "c:\Users\amarn\OneDrive\Desktop\BigOH Assignments\TypeScript\Day-1\index.ts"
+TypeError: Unknown file extension ".ts" for c:\Users\amarn\OneDrive\Desktop\BigOH Assignments\TypeScript\Day-1\index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:219:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:245:36)
+    at defaultLoad (node:internal/modules/esm/load:120:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:483:32)
+    at async ModuleJob._link (node:internal/modules/esm/module_job:115:19) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+bhai, kuch esa idea bata ki ek hee baar me ts -> js me complile aur run ho jaye
+
+
+bhai, javaScript me name naame ka variable banane par usake upar ek croll line kue aa tjate hai
+
+bhai, kya ye dono tarika sahi hai
+let name:sring = "this"
+let username:String = "that"
+
+bhai, zara number, Number, string, String, boolean, Boolean and so on zare achchhe se explain karana
+
+
+bhai, zara isko dekho ki kyu error aa raha hai,
+
+code:
+let username:string = "Amar Nath";
+let userId:symbol = Symbol("EC-521");
+let isMarrid:boolean = false;
+let mobileNo:bigint = 9140572251n;
+let age:number = 23;
+let currentAddress:null = null;
+let salary:undefined = undefined;
+
+console.log(`typeof value\n${typeof username} ${username}\n${typeof isMarrid} ${isMarrid}\n${typeof mobileNo} ${mobileNo}\n${typeof age} ${age}\n${typeof currentAddress} ${currentAddress}\n${typeof salary} ${salary} `);
+
+error:
+ tsc .\01_Data_types.ts
+01_Data_types.ts:4:21 - error TS2585: 'Symbol' only refers to a type, but is being used as a value here. Do you need to change your target library? Try changing the 'lib' compiler option to es2015 or later.
+
+4 let userId:symbol = Symbol("EC-521");
+                      ~~~~~~
+
+01_Data_types.ts:6:23 - error TS2737: BigInt literals are not available when targeting lower than ES2020.
+
+6 let mobileNo:bigint = 9140572251n;
+                        ~~~~~~~~~~~
+
+
+Found 2 errors in the same file, starting at: 01_Data_types.ts:4
+
+touch src/Day-1/01_Data_types.ts
+
+
+bhai, maine day-1 ke folder me 
+01_Data_types ------> username
+02_function --------> username
+banaya hai, ye error kyu de raha hai
+
+
+
+isko bhi thik kardo bhai, vaise hee jaise uppar wale ko kiya tha, person ke jagah  `info` kar dena
+
+1️⃣ push() - Add element at the end
+ts
+Copy
+Edit
+person.push("Engineer");
+console.log("After push('Engineer'):", person); // ["Amar", 25, true, "Engineer"]
+2️⃣ pop() - Remove last element
+ts
+Copy
+Edit
+person.pop();
+console.log("After pop():", person); // ["Amar", 25, true]
+3️⃣ unshift() - Add element at the start
+ts
+Copy
+Edit
+person.unshift("Mr.");
+console.log("After unshift('Mr.'):", person); // ["Mr.", "Amar", 25, true]
+4️⃣ shift() - Remove first element
+ts
+Copy
+Edit
+person.shift();
+console.log("After shift():", person); // ["Amar", 25, true]
+5️⃣ indexOf() - Find index of an element
+ts
+Copy
+Edit
+let index = person.indexOf(25);
+console.log("Index of 25:", index); // 1
+6️⃣ includes() - Check if an element exists
+ts
+Copy
+Edit
+console.log("Includes 'Amar':", person.includes("Amar")); // true
+console.log("Includes 30:", person.includes(30)); // false
+7️⃣ join() - Convert tuple to string
+ts
+Copy
+Edit
+let joinedString = person.join(" - ");
+console.log("Joined String:", joinedString); // "Amar - 25 - true"
+8️⃣ slice() - Extract a part of tuple
+ts
+Copy
+Edit
+let slicedTuple = person.slice(0, 2);
+console.log("Sliced Tuple (0 to 2):", slicedTuple); // ["Amar", 25]
+9️⃣ concat() - Merge two tuples
+ts
+Copy
+Edit
+let moreInfo: [string, string] = ["Developer", "India"];
+let mergedTuple = person.concat(moreInfo);
+console.log("Merged Tuple:", mergedTuple); // ["Amar", 25, true, "Developer", "India"]
+🔟 reverse() - Reverse the tuple
+ts
+Copy
+Edit
+let reversedTuple = [...person].reverse();
+console.log("Reversed Tuple:", reversedTuple); // [true, 25, "Amar"]
+1️⃣1️⃣ splice() - Remove and replace elements
+ts
+Copy
+Edit
+let splicedTuple = [...person];
+splicedTuple.splice(1, 1, 30);
+console.log("After splice (Replace 25 with 30):", splicedTuple); // ["Amar", 30, true]
+1️⃣2️⃣ find() - Find first matching element
+ts
+Copy
+Edit
+let foundItem = person.find(item => typeof item === "number");
+console.log("First number found:", foundItem); // 25
+1️⃣3️⃣ findIndex() - Get index of first match
+ts
+Copy
+Edit
+let foundIndex = person.findIndex(item => typeof item === "boolean");
+console.log("Index of first boolean:", foundIndex); // 2
+1️⃣4️⃣ some() - Check if any element matches condition
+ts
+Copy
+Edit
+let hasNumber = person.some(item => typeof item === "number");
+console.log("Tuple has a number:", hasNumber); // true
+1️⃣5️⃣ every() - Check if all elements match condition
+ts
+Copy
+Edit
+let allStrings = person.every(item => typeof item === "string");
+console.log("All elements are strings:", allStrings); // false
+bhai, ek baat bata push karate samay tuple me ye batana jaruri nahi ki kis type ka element push ho raha hai
+typescript me array vs tuple bhi batana
+
+
+
+
+
+
+
+
+
+
+bhai, javaScript, typescript, dynamictyped and stroglye typed me ralation batao
+
+bhai, aaj maine aapki help se typescript ka data types, functions, array in detail, tuple in detail, rest aur spread operator cover kar liya hai, kuch basic question poonch lo for test my knowledge.... ek ek puchhan mai ek ek ka jawab dunga
+
+rest parameter: function ke parameter ke roop me use kiya jata hai, aur ye value ko collect karake array bana deta hai
+spread operator: iterable data ko spread kar deta hai 
+
+null: ham intentionally no value assign karate hai
+undefined: by default agar koi value assign nahi hai, toh undefined se initialize ho jata hai
+
+function sum(a:number, b:number):number{
+  return a+ b;
+}
+
+let sub = (a:number, b:number):number =>{
+  return a-b;
+}
+
+function greet(name:string, age?:number, address:string = "Jaunpur"){
+  console.log(`Good morning ${name}, you are ${age} years old, you are from ${address}`)
+}
+
+bhai, yaha age optional parameter hai, aur address default parameter hai
+
+primitive: function me ye pass by value, inki value direct pass hoti hai... fast execute hote hai....koi built-in method nahi hota
+referencee: function me pass by reference, inki reference pass hota hai... slow execute hote hai...built in method hota hai
+
+
+
+
+
+
+
+
+
+
+
+bhai, topics ko jaldi jaldi cover karana hai,
+jis topic ke aage (can skip likha) ho use short me cover karo
+jis topic ke aage (can skip) na likha ho use thoda detail me cover karo.
+
+
+bhai, mujhe ek aur type programmer banani hai jisame person ki property saari ho, programmer uase extend karate laguage add kar de
+type Person = {
+  name: string;
+  age: number;
+  isMarried: boolean;
+
+};
+
+
+
+bhai, enum ka key hamesha string hee hota hai
+ye error kyu de raha hai          
+enum Mixedenum{
+    only = true,
+    two = "two",
+    three = 3
+}
+
+
+
+
+bhai, typescript ki learning continue karate hai..
+en topics ko zara detail me cover karana
+	Generics
+ - What are Generics.
+ - How to craete generic Function
+ - How to create Generic Types
+
+ ekdum detail me samajhan bhai, koi points chhoote na
+
+
+
+
+bhai, kamar kas so aaj ke typescript ke learning ke liye...
+
+
+//excluding the types
+type fruits = "Mango" | "Banana" | "Grapes" | "Orange"
+type myFruits = Exclude<fruits, "Mango" | "Orange">
+let a:myFruits = 5;
+bhai, varify kaise karu... ab do hee types bache hai
+
+
+bhai, en topics ko ekdum detail me explain karana... koi points mat chhodana
+Object-Oriented Programming (OOP) in TypeScript
+- Basics of classes and objects
+- Inheritance and polymorphism in TypeScript
+- Abstract classes
+
+
+
+ekdum detail me sikhana bhai, koi points chhhute na aur hok sake emoji thoda kam use karana, ho sake emoji kam use karana
+
+
+
+
+
+
+
+
+
+bhai, error kyu aa raha hai...
+export_all.ts
+export { baseURL, sub, sum } from "./03_export";
+export {default as exportDefaultFunction} from "./06_export_default";
+export { division, multiply } from "./06_export_default";
+ 
+import_all.
+import exportDefaultFunction, {sum, sub, multiply, division, baseURL} from './08_Re_Export_all'
+console.log(sum(2,3));
+console.log(sub(1234,23));
+console.log(multiply(1234,2));
+console.log(division(12342,3)); 
+console.log(baseURL);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
